@@ -20,9 +20,9 @@ builder.Services.AddEndpointsApiExplorer();
 // Add Swagger with JWT support
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "Hypesoft Product Management API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Hypesoft Product Management API",
         Version = "v1",
         Description = "A complete product management system API"
     });
@@ -86,7 +86,7 @@ builder.Services.AddRateLimiter(options =>
     };
 });
 
-// Add JWT Authentication
+// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -96,17 +96,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
         options.Authority = $"{keycloakUrl}/realms/{realm}";
         options.Audience = clientId;
-        options.RequireHttpsMetadata = false; // Only for development
-        
+        options.RequireHttpsMetadata = false; // dev only
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
             ValidIssuer = $"{keycloakUrl}/realms/{realm}",
+            ValidateAudience = true,
             ValidAudience = clientId,
-            ClockSkew = TimeSpan.Zero
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            // Map the role claim to the standard roles claim type
+            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+            NameClaimType = "preferred_username" // Optional: also map username
         };
 
         options.Events = new JwtBearerEvents
@@ -118,23 +120,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             },
             OnTokenValidated = context =>
             {
-                Log.Information("Token validated for user: {User}", 
-                    context.Principal?.Identity?.Name ?? "Unknown");
+                // Enhanced logging to see what claims are available
+                var claims = context.Principal?.Claims?.Select(c => $"{c.Type}: {c.Value}");
+                Log.Information("Token validated for user: {User}. Claims: {Claims}",
+                    context.Principal?.Identity?.Name ?? "Unknown",
+                    string.Join(", ", claims ?? new[] { "No claims" }));
                 return Task.CompletedTask;
             }
         };
     });
 
+
 // Add Authorization
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => 
-        policy.RequireRole("admin"));
-    options.AddPolicy("ManagerOrAdmin", policy => 
-        policy.RequireRole("admin", "manager"));
-    options.AddPolicy("AuthenticatedUser", policy => 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("admin"))
+    .AddPolicy("ManagerOrAdmin", policy =>
+        policy.RequireRole("admin", "manager"))
+    .AddPolicy("AuthenticatedUser", policy =>
         policy.RequireAuthenticatedUser());
-});
 
 // Add Application and Infrastructure services
 builder.Services.AddApplicationServices();
@@ -196,7 +200,6 @@ app.MapHealthChecks("/health/detailed", new Microsoft.AspNetCore.Diagnostics.Hea
             }),
             totalDuration = report.TotalDuration.TotalMilliseconds
         };
-        
         await context.Response.WriteAsJsonAsync(result);
     }
 });
