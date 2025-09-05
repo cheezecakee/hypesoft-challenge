@@ -27,10 +27,8 @@ namespace Hypesoft.API.Controllers
         {
             var query = new GetCategoryByIdQuery(id);
             var result = await _mediator.Send(query);
-            
             if (result == null)
                 return NotFound($"Category with ID {id} not found");
-            
             return Ok(result);
         }
 
