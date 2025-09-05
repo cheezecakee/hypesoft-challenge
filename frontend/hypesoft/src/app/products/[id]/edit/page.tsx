@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ProductForm } from '@/components/forms/ProductForm';
 import { useProduct, useUpdateProduct } from '@/hooks/useProducts';
+import { useCategories } from '@/hooks/useCategories';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { UpdateProductDto } from '@/types';
@@ -11,22 +12,24 @@ import type { UpdateProductDto } from '@/types';
 export default function EditProductPage() {
     const router = useRouter();
     const params = useParams();
-    const categoryId = params?.id as string;
+    const productId = params?.id as string;
 
-    const { data: category, isLoading, error } = useProduct(categoryId);
+    const { data: product, isLoading, error } = useProduct(productId);
+    const { data: categoriesData } = useCategories();
+    const categories = categoriesData || [];
+
     const updateProduct = useUpdateProduct();
 
     const handleSubmit = async (data: UpdateProductDto) => {
         try {
-            await updateProduct.mutateAsync({ id: categoryId, data });
+            await updateProduct.mutateAsync({ id: productId, data });
             router.push('/products');
         } catch (error) {
+            // Error handling is done in mutation hook
         }
     };
 
-    const handleCancel = () => {
-        router.push('/products');
-    };
+    const handleCancel = () => router.push('/products');
 
     if (error) {
         return (
@@ -70,7 +73,7 @@ export default function EditProductPage() {
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight">Edit Product</h2>
                     <p className="text-muted-foreground">
-                        Update category information and organization
+                        Update product information and organization
                     </p>
                 </div>
 
@@ -79,8 +82,9 @@ export default function EditProductPage() {
                         <CardTitle>Product Details</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ProductForm
-                            initialData={category}
+                        <ProductForm<UpdateProductDto>
+                            initialData={product}
+                            categories={categories}
                             onSubmit={handleSubmit}
                             onCancel={handleCancel}
                             isLoading={updateProduct.isPending}
@@ -91,3 +95,4 @@ export default function EditProductPage() {
         </MainLayout>
     );
 }
+

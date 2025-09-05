@@ -9,29 +9,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { productSchema, type ProductFormData } from '@/lib/validation/schemas';
 import type { CreateProductDto, UpdateProductDto, Product, Category } from '@/types';
 
-interface ProductFormProps {
+interface ProductFormProps<T extends CreateProductDto | UpdateProductDto = CreateProductDto | UpdateProductDto> {
     initialData?: Product;
     categories: Category[];
-    onSubmit: (data: CreateProductDto | UpdateProductDto) => Promise<void>;
+    onSubmit: (data: T) => Promise<void>;
     onCancel: () => void;
     isLoading?: boolean;
 }
 
-export function ProductForm({
+export function ProductForm<T extends CreateProductDto | UpdateProductDto = CreateProductDto | UpdateProductDto>({
     initialData,
     categories,
     onSubmit,
     onCancel,
-    isLoading = false
-}: ProductFormProps) {
+    isLoading = false,
+}: ProductFormProps<T>) {
     const {
         register,
         handleSubmit,
         watch,
         reset,
         control,
-        setValue,
-        formState: { errors, isSubmitting }
+        formState: { errors, isSubmitting },
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
         defaultValues: {
@@ -40,10 +39,9 @@ export function ProductForm({
             price: initialData?.price || 0,
             categoryId: initialData?.categoryId || '',
             stockQuantity: initialData?.stockQuantity || 0,
-        }
+        },
     });
 
-    // Reset form when initialData changes
     useEffect(() => {
         if (initialData) {
             reset({
@@ -67,20 +65,18 @@ export function ProductForm({
                 price: data.price,
                 categoryId: data.categoryId,
                 stockQuantity: data.stockQuantity,
-            });
+            } as T);
         } catch (error) {
-            // Error handling is done in the parent component
+            // Error handling is done in parent
         }
     };
 
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Product Name */}
+                {/* Name */}
                 <div className="space-y-2">
-                    <Label htmlFor="name">
-                        Product Name <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="name">Product Name <span className="text-red-500">*</span></Label>
                     <Input
                         id="name"
                         type="text"
@@ -89,16 +85,12 @@ export function ProductForm({
                         disabled={isProcessing}
                         className={errors.name ? 'border-red-500' : ''}
                     />
-                    {errors.name && (
-                        <p className="text-sm text-red-500">{errors.name.message}</p>
-                    )}
+                    {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                 </div>
 
                 {/* Category */}
                 <div className="space-y-2">
-                    <Label htmlFor="categoryId">
-                        Category <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="categoryId">Category <span className="text-red-500">*</span></Label>
                     <Controller
                         name="categoryId"
                         control={control}
@@ -113,24 +105,18 @@ export function ProductForm({
                                 </SelectTrigger>
                                 <SelectContent>
                                     {categories.map((category) => (
-                                        <SelectItem key={category.id} value={category.id}>
-                                            {category.name}
-                                        </SelectItem>
+                                        <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
                         )}
                     />
-                    {errors.categoryId && (
-                        <p className="text-sm text-red-500">{errors.categoryId.message}</p>
-                    )}
+                    {errors.categoryId && <p className="text-sm text-red-500">{errors.categoryId.message}</p>}
                 </div>
 
                 {/* Price */}
                 <div className="space-y-2">
-                    <Label htmlFor="price">
-                        Price ($) <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="price">Price ($) <span className="text-red-500">*</span></Label>
                     <Input
                         id="price"
                         type="number"
@@ -141,16 +127,12 @@ export function ProductForm({
                         disabled={isProcessing}
                         className={errors.price ? 'border-red-500' : ''}
                     />
-                    {errors.price && (
-                        <p className="text-sm text-red-500">{errors.price.message}</p>
-                    )}
+                    {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
                 </div>
 
-                {/* Stock Quantity */}
+                {/* Stock */}
                 <div className="space-y-2">
-                    <Label htmlFor="stockQuantity">
-                        Stock Quantity <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="stockQuantity">Stock Quantity <span className="text-red-500">*</span></Label>
                     <Input
                         id="stockQuantity"
                         type="number"
@@ -160,9 +142,7 @@ export function ProductForm({
                         disabled={isProcessing}
                         className={errors.stockQuantity ? 'border-red-500' : ''}
                     />
-                    {errors.stockQuantity && (
-                        <p className="text-sm text-red-500">{errors.stockQuantity.message}</p>
-                    )}
+                    {errors.stockQuantity && <p className="text-sm text-red-500">{errors.stockQuantity.message}</p>}
                 </div>
             </div>
 
@@ -177,12 +157,8 @@ export function ProductForm({
                     rows={4}
                     className={errors.description ? 'border-red-500' : ''}
                 />
-                {errors.description && (
-                    <p className="text-sm text-red-500">{errors.description.message}</p>
-                )}
-                <p className="text-sm text-muted-foreground">
-                    {description.length}/1000 characters
-                </p>
+                {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+                <p className="text-sm text-muted-foreground">{description.length}/1000 characters</p>
             </div>
 
             <div className="flex gap-4 pt-4">
@@ -196,3 +172,4 @@ export function ProductForm({
         </form>
     );
 }
+
