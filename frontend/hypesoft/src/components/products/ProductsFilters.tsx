@@ -58,16 +58,16 @@ export function ProductsFilters({ filters, onFiltersChange }: ProductsFiltersPro
                         </div>
                     </form>
 
-                    {/* Category Filter */}
+                    {/* Category Filter - FIXED: Use "all" instead of empty string */}
                     <Select
-                        value={filters.categoryId || ''}
-                        onValueChange={(value) => onFiltersChange({ categoryId: value || '' })}
+                        value={filters.categoryId || 'all'}
+                        onValueChange={(value) => onFiltersChange({ categoryId: value === 'all' ? '' : value })}
                     >
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="All categories" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="">All categories</SelectItem>
+                            <SelectItem value="all">All categories</SelectItem>
                             {categories?.map((category) => (
                                 <SelectItem key={category.id} value={category.id}>
                                     {category.name}
