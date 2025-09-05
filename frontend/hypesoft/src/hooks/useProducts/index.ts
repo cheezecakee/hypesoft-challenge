@@ -1,48 +1,64 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { productsApi } from '@/services';
+import { useAuth } from '@/hooks/useAuth';
+import { createProductsApi } from '@/services';
 import { queryKeys } from '@/lib/queryClient';
 import type {
-    Product,
     CreateProductDto,
     UpdateProductDto,
     ProductsQueryParams
 } from '@/types';
 
 export const useProducts = (params?: ProductsQueryParams) => {
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
+
     return useQuery({
         queryKey: queryKeys.productsList(params),
         queryFn: () => productsApi.getProducts(params),
-        staleTime: 1000 * 60 * 2, // 2 minutes for lists
+        staleTime: 1000 * 60 * 2, // 2 minutes
+        enabled: !!makeRequest, // Only run when we have the API function
     });
 };
 
 export const useProduct = (id: string) => {
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
+
     return useQuery({
         queryKey: queryKeys.product(id),
         queryFn: () => productsApi.getProduct(id),
-        enabled: !!id,
+        enabled: !!id && !!makeRequest,
     });
 };
 
 export const useProductSearch = (query: string) => {
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
+
     return useQuery({
         queryKey: queryKeys.productsSearch(query),
         queryFn: () => productsApi.searchProducts(query),
-        enabled: query.length > 2, // Only search with 3+ characters
-        staleTime: 1000 * 30, // 30 seconds for search
+        enabled: query.length > 2 && !!makeRequest, // Only search with 3+ characters and when authenticated
+        staleTime: 1000 * 30, // 30 seconds
     });
 };
 
 export const useLowStockProducts = () => {
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
+
     return useQuery({
         queryKey: queryKeys.lowStockProducts(),
         queryFn: () => productsApi.getLowStockProducts(),
+        enabled: !!makeRequest, // Only run when we have the API function
     });
 };
 
 export const useCreateProduct = () => {
     const queryClient = useQueryClient();
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
 
     return useMutation({
         mutationFn: (data: CreateProductDto) => productsApi.createProduct(data),
@@ -61,6 +77,8 @@ export const useCreateProduct = () => {
 
 export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateProductDto }) =>
@@ -84,6 +102,8 @@ export const useUpdateProduct = () => {
 
 export const useDeleteProduct = () => {
     const queryClient = useQueryClient();
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
 
     return useMutation({
         mutationFn: (id: string) => productsApi.deleteProduct(id),
@@ -106,6 +126,8 @@ export const useDeleteProduct = () => {
 
 export const useUpdateProductStock = () => {
     const queryClient = useQueryClient();
+    const { makeRequest } = useAuth();
+    const productsApi = createProductsApi(makeRequest);
 
     return useMutation({
         mutationFn: ({ id, stockQuantity }: { id: string; stockQuantity: number }) =>
