@@ -1,41 +1,205 @@
+using Serilog;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Hypesoft.Application;
+using Hypesoft.Infrastructure;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Add Serilog
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+// Add Swagger with JWT support
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo 
+    { 
+        Title = "Hypesoft Product Management API", 
+        Version = "v1",
+        Description = "A complete product management system API"
+    });
+
+    // Add JWT Authentication to Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Add Rate Limiting
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("ApiPolicy", configure =>
+    {
+        configure.PermitLimit = 100;
+        configure.Window = TimeSpan.FromMinutes(1);
+        configure.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        configure.QueueLimit = 10;
+    });
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsync(
+            "Rate limit exceeded. Please try again later.", token);
+    };
+});
+
+// Add JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var keycloakUrl = builder.Configuration["Keycloak:Authority"];
+        var realm = builder.Configuration["Keycloak:Realm"];
+        var clientId = builder.Configuration["Keycloak:ClientId"];
+
+        options.Authority = $"{keycloakUrl}/realms/{realm}";
+        options.Audience = clientId;
+        options.RequireHttpsMetadata = false; // Only for development
+        
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = $"{keycloakUrl}/realms/{realm}",
+            ValidAudience = clientId,
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Log.Error("Authentication failed: {Error}", context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Log.Information("Token validated for user: {User}", 
+                    context.Principal?.Identity?.Name ?? "Unknown");
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+// Add Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => 
+        policy.RequireRole("admin"));
+    options.AddPolicy("ManagerOrAdmin", policy => 
+        policy.RequireRole("admin", "manager"));
+    options.AddPolicy("AuthenticatedUser", policy => 
+        policy.RequireAuthenticatedUser());
+});
+
+// Add Application and Infrastructure services
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Add Health Checks with custom response
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hypesoft API V1");
+        c.RoutePrefix = string.Empty; // Swagger at root
+    });
 }
 
+// Security Headers Middleware
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'");
+    await next();
+});
+
+// Use middlewares
+app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
 
-var summaries = new[]
+// Map controllers and health checks
+app.MapControllers().RequireRateLimiting("ApiPolicy");
+app.MapHealthChecks("/health");
+
+// Custom health check with detailed response
+app.MapHealthChecks("/health/detailed", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    ResponseWriter = async (context, report) =>
+    {
+        var result = new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                description = entry.Value.Description,
+                duration = entry.Value.Duration.TotalMilliseconds
+            }),
+            totalDuration = report.TotalDuration.TotalMilliseconds
+        };
+        
+        await context.Response.WriteAsJsonAsync(result);
+    }
+});
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
+Log.Information("Starting Hypesoft API...");
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

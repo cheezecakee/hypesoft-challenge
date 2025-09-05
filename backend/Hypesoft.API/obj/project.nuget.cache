@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "b/46wCcRxM8=",
-  "success": false,
+  "dgSpecHash": "5ML0DoQOKj4=",
+  "success": true,
   "projectFilePath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.API/Hypesoft.API.csproj",
   "expectedPackageFiles": [
-    "/home/cheeze/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/automapper/15.0.1/automapper.15.0.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/dnsclient/1.6.1/dnsclient.1.6.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/fluentvalidation/12.0.0/fluentvalidation.12.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/fluentvalidation.aspnetcore/11.3.1/fluentvalidation.aspnetcore.11.3.1.nupkg.sha512",
-    "/home/cheeze/.nuget/packages/fluentvalidation.dependencyinjectionextensions/11.11.0/fluentvalidation.dependencyinjectionextensions.11.11.0.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.0.0/fluentvalidation.dependencyinjectionextensions.12.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/mediatr/13.0.0/mediatr.13.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/mediatr.contracts/2.0.1/mediatr.contracts.2.0.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/9.0.8/microsoft.aspnetcore.authentication.jwtbearer.9.0.8.nupkg.sha512",
@@ -27,9 +27,11 @@
     "/home/cheeze/.nuget/packages/microsoft.extensions.dependencyinjection/9.0.8/microsoft.extensions.dependencyinjection.9.0.8.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/9.0.8/microsoft.extensions.dependencyinjection.abstractions.9.0.8.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.extensions.dependencymodel/9.0.0/microsoft.extensions.dependencymodel.9.0.0.nupkg.sha512",
-    "/home/cheeze/.nuget/packages/microsoft.extensions.diagnostics.abstractions/9.0.0/microsoft.extensions.diagnostics.abstractions.9.0.0.nupkg.sha512",
-    "/home/cheeze/.nuget/packages/microsoft.extensions.fileproviders.abstractions/9.0.0/microsoft.extensions.fileproviders.abstractions.9.0.0.nupkg.sha512",
-    "/home/cheeze/.nuget/packages/microsoft.extensions.hosting.abstractions/9.0.0/microsoft.extensions.hosting.abstractions.9.0.0.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/microsoft.extensions.diagnostics.abstractions/9.0.8/microsoft.extensions.diagnostics.abstractions.9.0.8.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/microsoft.extensions.diagnostics.healthchecks/9.0.8/microsoft.extensions.diagnostics.healthchecks.9.0.8.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/microsoft.extensions.diagnostics.healthchecks.abstractions/9.0.8/microsoft.extensions.diagnostics.healthchecks.abstractions.9.0.8.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/microsoft.extensions.fileproviders.abstractions/9.0.8/microsoft.extensions.fileproviders.abstractions.9.0.8.nupkg.sha512",
+    "/home/cheeze/.nuget/packages/microsoft.extensions.hosting.abstractions/9.0.8/microsoft.extensions.hosting.abstractions.9.0.8.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.extensions.logging/9.0.8/microsoft.extensions.logging.9.0.8.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.extensions.logging.abstractions/9.0.8/microsoft.extensions.logging.abstractions.9.0.8.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.extensions.options/9.0.8/microsoft.extensions.options.9.0.8.nupkg.sha512",
@@ -69,17 +71,5 @@
     "/home/cheeze/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/zstdsharp.port/0.7.3/zstdsharp.port.0.7.3.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1107",
-      "level": "Error",
-      "message": "Version conflict detected for AutoMapper. Install/reference AutoMapper 15.0.1 directly to project Hypesoft.API to resolve this issue. \n Hypesoft.API -> Hypesoft.Application -> AutoMapper (>= 15.0.1) \n Hypesoft.API -> AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 -> AutoMapper (= 12.0.1).",
-      "projectPath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.API/Hypesoft.API.csproj",
-      "filePath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.API/Hypesoft.API.csproj",
-      "libraryId": "AutoMapper",
-      "targetGraphs": [
-        "net9.0"
-      ]
-    }
-  ]
+  "logs": []
 }
