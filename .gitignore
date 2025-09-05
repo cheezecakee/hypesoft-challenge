@@ -1,0 +1,46 @@
+# Visual Studio / Rider / IDE
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build artifacts
+bin/
+obj/
+Debug/
+Release/
+
+# Rider / IntelliJ
+.idea/
+
+# .NET
+*.nupkg
+*.snupkg
+*.dll
+*.pdb
+*.cache
+*.log
+*.ide
+
+# EF Core / Migrations (optional, if not committed)
+Migrations/
+
+# MongoDB local files (if any)
+*.lock
+*.db
+
+# Docker
+docker-compose.override.yml
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
