@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Hypesoft.Domain.Repositories;
+using Hypesoft.Domain.Services;
 using Hypesoft.Infrastructure.Data.Context;
 using Hypesoft.Infrastructure.Repositories;
 using Hypesoft.Infrastructure.Services;

@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Hypesoft.Domain.Services;
 using Hypesoft.Infrastructure.Data.Context;
-using Hypesoft.Domain.Entities;
 
 namespace Hypesoft.Infrastructure.Services
 {
     public class DashboardService(ApplicationDbContext context) : IDashboardService
     {
-        private readonly ApplicationDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly ApplicationDbContext _context = context;
 
         public async Task<int> GetTotalProductsAsync(CancellationToken cancellationToken = default)
         {
@@ -15,32 +15,35 @@ namespace Hypesoft.Infrastructure.Services
 
         public async Task<decimal> GetTotalStockValueAsync(CancellationToken cancellationToken = default)
         {
-            List<Product> products = await _context.Products.ToListAsync(cancellationToken);
-            return products.Sum(static p => p.Price.Amount * p.StockQuantity);
+            return await _context.Products
+                .SumAsync(static p => p.Price.Amount * p.StockQuantity, cancellationToken);
         }
 
-        public async Task<IEnumerable<object>> GetProductsByCategory(CancellationToken cancellationToken = default)
+        public async Task<int> GetLowStockProductCountAsync(CancellationToken cancellationToken = default)
         {
-            var productsWithCategories = await (
-                from p in _context.Products
-                join c in _context.Categories on p.CategoryId equals c.Id
-                group p by new { c.Id, c.Name } into g
-                select new
-                {
-                    CategoryId = g.Key.Id,
-                    CategoryName = g.Key.Name,
-                    ProductCount = g.Count()
-                }
-            ).ToListAsync(cancellationToken);
-
-            return productsWithCategories;
+            return await _context.Products
+                .CountAsync(static p => p.StockQuantity < 10, cancellationToken);
         }
-    }
 
-    public interface IDashboardService
-    {
-        Task<int> GetTotalProductsAsync(CancellationToken cancellationToken = default);
-        Task<decimal> GetTotalStockValueAsync(CancellationToken cancellationToken = default);
-        Task<IEnumerable<object>> GetProductsByCategory(CancellationToken cancellationToken = default);
+        public async Task<int> GetTotalCategoriesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Categories.CountAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<(string CategoryId, string CategoryName, int ProductCount, decimal TotalValue)>> GetProductsByCategoryAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Categories
+                .Select(c => new
+                {
+                    CategoryId = c.Id,
+                    CategoryName = c.Name,
+                    ProductCount = _context.Products.Count(p => p.CategoryId == c.Id),
+                    TotalValue = _context.Products
+                        .Where(p => p.CategoryId == c.Id)
+                        .Sum(p => p.Price.Amount * p.StockQuantity)
+                })
+                .Select(x => ValueTuple.Create(x.CategoryId, x.CategoryName, x.ProductCount, x.TotalValue))
+                .ToListAsync(cancellationToken);
+        }
     }
 }

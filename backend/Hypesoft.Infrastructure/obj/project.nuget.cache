@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "v9xsIhphQ+k=",
+  "dgSpecHash": "SK7FenqtUHs=",
   "success": true,
   "projectFilePath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Infrastructure/Hypesoft.Infrastructure.csproj",
   "expectedPackageFiles": [
     "/home/cheeze/.nuget/packages/automapper/15.0.1/automapper.15.0.1.nupkg.sha512",
-    "/home/cheeze/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/dnsclient/1.6.1/dnsclient.1.6.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/fluentvalidation/12.0.0/fluentvalidation.12.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.0.0/fluentvalidation.dependencyinjectionextensions.12.0.0.nupkg.sha512",
@@ -54,18 +53,5 @@
     "/home/cheeze/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/zstdsharp.port/0.7.3/zstdsharp.port.0.7.3.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1608",
-      "level": "Warning",
-      "message": "Detected package version outside of dependency constraint: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requires AutoMapper (= 12.0.1) but version AutoMapper 15.0.1 was resolved.",
-      "projectPath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Infrastructure/Hypesoft.Infrastructure.csproj",
-      "warningLevel": 1,
-      "filePath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Infrastructure/Hypesoft.Infrastructure.csproj",
-      "libraryId": "AutoMapper",
-      "targetGraphs": [
-        "net9.0"
-      ]
-    }
-  ]
+  "logs": []
 }

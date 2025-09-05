@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Hypesoft.Domain.Entities;
 using Hypesoft.Domain.Repositories;
 using Hypesoft.Infrastructure.Data.Context;
@@ -12,7 +11,7 @@ namespace Hypesoft.Infrastructure.Repositories
 
         public async Task<Product?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            return await _context.Products.FindAsync([id], cancellationToken);
+            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
         }
 
         public async Task<IEnumerable<Product>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -37,6 +36,7 @@ namespace Hypesoft.Infrastructure.Repositories
         public async Task<IEnumerable<Product>> GetLowStockProductsAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Products
+                .Include(static p => p.Category)
                 .Where(static p => p.StockQuantity < 10)
                 .ToListAsync(cancellationToken);
         }
@@ -54,9 +54,9 @@ namespace Hypesoft.Infrastructure.Repositories
 
         public async Task<Product> CreateAsync(Product product, CancellationToken cancellationToken = default)
         {
-            EntityEntry<Product> entry = await _context.Products.AddAsync(product, cancellationToken);
+            await _context.Products.AddAsync(product, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-            return entry.Entity;
+            return product;
         }
 
         public async Task<Product> UpdateAsync(Product product, CancellationToken cancellationToken = default)
@@ -79,6 +79,49 @@ namespace Hypesoft.Infrastructure.Repositories
         public async Task<bool> ExistsAsync(string id, CancellationToken cancellationToken = default)
         {
             return await _context.Products.AnyAsync(p => p.Id == id, cancellationToken);
+        }
+
+        public async Task<(IEnumerable<Product> Products, int TotalCount)> SearchAsync(
+            string? searchTerm,
+            string? categoryId,
+            int page,
+            int pageSize,
+            CancellationToken cancellationToken = default)
+        {
+            IQueryable<Product> query = _context.Products.Include(static p => p.Category).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p => p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm));
+            }
+
+            if (!string.IsNullOrWhiteSpace(categoryId))
+            {
+                query = query.Where(p => p.CategoryId == categoryId);
+            }
+
+            int totalCount = await query.CountAsync(cancellationToken);
+            List<Product> products = await query
+                .OrderBy(static p => p.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return (products, totalCount);
+        }
+
+        public async Task<Product?> GetByIdWithCategoryAsync(string id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Products
+                .Include(static p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        }
+
+        public async Task<IEnumerable<Product>> GetAllWithCategoryAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Products
+                .Include(static p => p.Category)
+                .ToListAsync(cancellationToken);
         }
     }
 }
