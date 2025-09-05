@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { MoreHorizontal, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';

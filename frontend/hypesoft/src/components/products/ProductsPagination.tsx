@@ -1,5 +1,3 @@
-'use client';
-
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -59,6 +57,14 @@ export function ProductsPagination({
         return rangeWithDots;
     };
 
+    const handlePageChange = (page: number) => {
+        onPageChange(page);
+    };
+
+    const handlePageSizeChange = (newPageSize: number) => {
+        onPageSizeChange(newPageSize);
+    };
+
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -70,7 +76,7 @@ export function ProductsPagination({
                     <span>Rows per page:</span>
                     <Select
                         value={pageSize.toString()}
-                        onValueChange={(value) => onPageSizeChange(Number(value))}
+                        onValueChange={(value) => handlePageSizeChange(Number(value))}
                     >
                         <SelectTrigger className="w-[70px] h-8">
                             <SelectValue />
@@ -89,7 +95,7 @@ export function ProductsPagination({
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onPageChange(currentPage - 1)}
+                    onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                 >
                     <ChevronLeft className="h-4 w-4" />
@@ -103,7 +109,7 @@ export function ProductsPagination({
                             variant={page === currentPage ? "default" : "outline"}
                             size="sm"
                             className="w-9"
-                            onClick={() => typeof page === 'number' && onPageChange(page)}
+                            onClick={() => typeof page === 'number' && handlePageChange(page)}
                             disabled={typeof page === 'string'}
                         >
                             {page}
@@ -114,7 +120,7 @@ export function ProductsPagination({
                 <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => onPageChange(currentPage + 1)}
+                    onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                 >
                     Next
