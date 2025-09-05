@@ -1,4 +1,3 @@
-
 # ------------------------
 # Visual Studio / IDE
 # ------------------------
@@ -11,7 +10,7 @@
 .idea/
 
 # ------------------------
-# Build Artifacts
+# Build Artifacts / Binaries
 # ------------------------
 bin/
 obj/
@@ -28,7 +27,6 @@ Release/
 *.nupkg
 *.snupkg
 packages/
-*.dll
 
 # ------------------------
 # EF Core / Migrations
@@ -53,6 +51,7 @@ docker-compose.override.yml
 # ------------------------
 .DS_Store
 Thumbs.db
+*.pem
 
 # ------------------------
 # Test Results
@@ -63,43 +62,33 @@ TestResults/
 *.coveragexml
 
 # ------------------------
-# Logs
+# Node / Frontend
 # ------------------------
-*.log
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
 /node_modules
 /.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
-/coverage
-
-# next.js
+# Next.js
 /.next/
 /out/
-
-# production
 /build
 
-# misc
-.DS_Store
-*.pem
+# Testing
+/coverage
 
-# debug
+# Debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# Local environment files
 .env*.local
 
-# vercel
+# Vercel
 .vercel
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
