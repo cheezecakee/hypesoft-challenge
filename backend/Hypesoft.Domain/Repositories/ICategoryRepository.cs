@@ -12,5 +12,7 @@ namespace Hypesoft.Domain.Repositories
         Task DeleteAsync(string id, CancellationToken cancellationToken = default);
         Task<bool> ExistsAsync(string id, CancellationToken cancellationToken = default);
         Task<bool> HasProductsAsync(string id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Category>> GetAllWithProductCountAsync(CancellationToken cancellationToken = default);
+        Task<Category?> GetByIdWithProductCountAsync(string id, CancellationToken cancellationToken = default);
     }
 }
