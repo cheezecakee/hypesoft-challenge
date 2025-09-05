@@ -7,6 +7,8 @@ namespace Hypesoft.Application.DTOs.Categories
         int ProductCount,
         DateTime CreatedAt,
         DateTime? UpdatedAt
-    );
+    )
+    {
+        public CategoryDto() : this(string.Empty, string.Empty, string.Empty, 0, DateTime.MinValue, null) { }
+    };
 }
-

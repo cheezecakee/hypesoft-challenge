@@ -1,0 +1,16 @@
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.csproj.AssemblyReference.cache
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.GeneratedMSBuildEditorConfig.editorconfig
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.AssemblyInfoInputs.cache
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.AssemblyInfo.cs
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.csproj.CoreCompileInputs.cache
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.sourcelink.json
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/bin/Debug/net9.0/Hypesoft.Application.deps.json
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/bin/Debug/net9.0/Hypesoft.Application.dll
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/bin/Debug/net9.0/Hypesoft.Application.pdb
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/bin/Debug/net9.0/Hypesoft.Domain.dll
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/bin/Debug/net9.0/Hypesoft.Domain.pdb
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.61B6789D.Up2Date
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.dll
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/refint/Hypesoft.Application.dll
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/Hypesoft.Application.pdb
+/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/obj/Debug/net9.0/ref/Hypesoft.Application.dll

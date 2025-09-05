@@ -12,5 +12,10 @@ namespace Hypesoft.Application.DTOs.Products
         bool IsLowStock,
         DateTime CreatedAt,
         DateTime? UpdatedAt
-    );
+    )
+    {
+        public ProductDto() : this(string.Empty, string.Empty, string.Empty, 0m, string.Empty,
+            string.Empty, string.Empty, 0, false, DateTime.MinValue, null)
+        { }
+    };
 }

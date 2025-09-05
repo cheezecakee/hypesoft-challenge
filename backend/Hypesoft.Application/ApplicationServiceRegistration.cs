@@ -2,7 +2,6 @@ using FluentValidation;
 using Hypesoft.Application.Common.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using AutoMapper;
 using MediatR;
 
 namespace Hypesoft.Application
@@ -11,8 +10,11 @@ namespace Hypesoft.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            // AutoMapper
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            // AutoMapper - Fixed registration
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddMaps(Assembly.GetExecutingAssembly());
+            });
 
             // MediatR
             services.AddMediatR(static cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -27,4 +29,3 @@ namespace Hypesoft.Application
         }
     }
 }
-

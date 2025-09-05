@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "/29zlzE6Rrk=",
+  "dgSpecHash": "hDX92Vdv2io=",
   "success": true,
   "projectFilePath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/Hypesoft.Application.csproj",
   "expectedPackageFiles": [
     "/home/cheeze/.nuget/packages/automapper/15.0.1/automapper.15.0.1.nupkg.sha512",
-    "/home/cheeze/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/fluentvalidation/12.0.0/fluentvalidation.12.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.0.0/fluentvalidation.dependencyinjectionextensions.12.0.0.nupkg.sha512",
     "/home/cheeze/.nuget/packages/mediatr/13.0.0/mediatr.13.0.0.nupkg.sha512",
@@ -21,18 +20,5 @@
     "/home/cheeze/.nuget/packages/microsoft.identitymodel.logging/8.0.1/microsoft.identitymodel.logging.8.0.1.nupkg.sha512",
     "/home/cheeze/.nuget/packages/microsoft.identitymodel.tokens/8.0.1/microsoft.identitymodel.tokens.8.0.1.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1608",
-      "level": "Warning",
-      "message": "Detected package version outside of dependency constraint: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requires AutoMapper (= 12.0.1) but version AutoMapper 15.0.1 was resolved.",
-      "projectPath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/Hypesoft.Application.csproj",
-      "warningLevel": 1,
-      "filePath": "/mnt/work/Projects/hypesoft-challenge/backend/Hypesoft.Application/Hypesoft.Application.csproj",
-      "libraryId": "AutoMapper",
-      "targetGraphs": [
-        "net9.0"
-      ]
-    }
-  ]
+  "logs": []
 }
