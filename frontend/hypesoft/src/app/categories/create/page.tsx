@@ -16,7 +16,6 @@ export default function CreateCategoryPage() {
             await createCategory.mutateAsync(data);
             router.push('/categories');
         } catch (error) {
-            // Error is handled by the mutation
         }
     };
 

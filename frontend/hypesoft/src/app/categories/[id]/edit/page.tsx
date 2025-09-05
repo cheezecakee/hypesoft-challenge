@@ -21,7 +21,6 @@ export default function EditCategoryPage() {
             await updateCategory.mutateAsync({ id: categoryId, data });
             router.push('/categories');
         } catch (error) {
-            // Error is handled by the mutation
         }
     };
 
