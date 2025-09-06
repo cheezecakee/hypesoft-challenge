@@ -12,8 +12,26 @@ export interface PaginatedResponse<T> {
     totalPages: number;
 }
 
+export interface Money {
+    amount: number;
+    currency: string;
+}
+
 // Product Types
 export interface Product {
+    id: string;
+    name: string;
+    description: string;
+    price: Money;
+    categoryId: string;
+    stockQuantity: number;
+    category?: Category;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// Frontend display product
+export interface ProductDisplay {
     id: string;
     name: string;
     description: string;
@@ -64,14 +82,15 @@ export interface UpdateCategoryDto {
 export interface DashboardStats {
     totalProducts: number;
     totalStockValue: number;
-    lowStockProducts: Product[];
-    categoriesStats: CategoryStats[];
+    lowStockProductCount: number;
+    totalCategories: number;
 }
 
 export interface CategoryStats {
     categoryId: string;
     categoryName: string;
     productCount: number;
+    totalValue: number;
 }
 
 // Query Parameters
