@@ -18,18 +18,22 @@ namespace Hypesoft.Application.Handlers.Categories
         public async Task<CategoryDto> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             Category? category = await _categoryRepository.GetByIdAsync(request.Id, cancellationToken)
-                ?? throw new ArgumentException($"Category with ID {request.Id} not found");
+                ?? throw new KeyNotFoundException($"Category with ID {request.Id} not found");
 
-            // Check if another category with same name already exists
-            Category? existingCategory = await _categoryRepository.GetByNameAsync(request.Name, cancellationToken);
-            if (existingCategory != null && existingCategory.Id != request.Id)
+            // Only validate name uniqueness if name is being updated
+            if (!string.IsNullOrWhiteSpace(request.Name))
             {
-                throw new ArgumentException($"Category with name '{request.Name}' already exists");
+                Category? existingCategory = await _categoryRepository.GetByNameAsync(request.Name, cancellationToken);
+                if (existingCategory != null && existingCategory.Id != request.Id)
+                {
+                    throw new InvalidOperationException($"Category with name '{request.Name}' already exists");
+                }
             }
 
-            category.Update(request.Name, request.Description);
+            category.PartialUpdate(request.Name, request.Description);
             Category updatedCategory = await _categoryRepository.UpdateAsync(category, cancellationToken);
             return _mapper.Map<CategoryDto>(updatedCategory);
         }
     }
 }
+
