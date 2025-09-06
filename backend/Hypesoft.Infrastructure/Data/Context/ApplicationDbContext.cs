@@ -42,8 +42,13 @@ namespace Hypesoft.Infrastructure.Data.Context
                     money.Property(static m => m.Currency).IsRequired().HasMaxLength(3);
                 });
 
-                // Navigation - ignore for now (MongoDB EF Core has limited navigation support)
-                entity.Ignore(static p => p.Category);
+                // Configure navigation properties - REMOVED the Ignore calls
+                entity.HasOne(static p => p.Category)
+                      .WithMany(static c => c.Products)
+                      .HasForeignKey(static p => p.CategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Still ignore computed properties and domain events
                 entity.Ignore(static p => p.IsLowStock);
                 entity.Ignore(static p => p.DomainEvents);
 
@@ -63,8 +68,8 @@ namespace Hypesoft.Infrastructure.Data.Context
                 entity.Property(static c => c.CreateAt).IsRequired();
                 entity.Property(static c => c.UpdatedAt);
 
-                // Navigation - ignore for now
-                entity.Ignore(static c => c.Products);
+                // Navigation is now configured via Product entity
+                // Still ignore domain events
                 entity.Ignore(static c => c.DomainEvents);
 
                 // Index for better performance

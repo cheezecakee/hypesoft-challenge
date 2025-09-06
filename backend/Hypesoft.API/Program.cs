@@ -6,6 +6,8 @@ using Hypesoft.Application;
 using Hypesoft.Infrastructure;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
+using Hypesoft.Infrastructure.Data.Seed;
+using Hypesoft.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -156,8 +158,25 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Hypesoft API V1");
-        c.RoutePrefix = string.Empty; // Swagger at root
+        c.RoutePrefix = string.Empty;
     });
+    using (var scope = app.Services.CreateScope())
+    {
+        var serviceProvider = scope.ServiceProvider;
+        try
+        {
+            var categoryRepository = serviceProvider.GetRequiredService<ICategoryRepository>();
+            var productRepository = serviceProvider.GetRequiredService<IProductRepository>();
+            var logger = serviceProvider.GetRequiredService<ILogger<DatabaseSeeder>>();
+            var seeder = new DatabaseSeeder(categoryRepository, productRepository, logger);
+            await seeder.SeedAsync();
+        }
+        catch (Exception ex)
+        {
+            var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while seeding the database");
+        }
+    }
 }
 
 // Security Headers Middleware
