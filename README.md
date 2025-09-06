@@ -1,3 +1,5 @@
+[Leia a versão em português](README-PT.md) | [Read the English version](README.md)
+
 # Hypesoft Product Management System
 
 ## Overview
@@ -50,18 +52,19 @@ This project is a full-stack product management system demonstrating modern arch
 
 Frontend and backend require environment variables for API URLs and Keycloak integration:
 
+### Frontend
 ```bash
-# Frontend
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
 NEXT_PUBLIC_KEYCLOAK_REALM=Hypesoft
-NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend```
+NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend
+```
 
 --- 
 
-# Installation
+## Installation
 
-## Clone the Repository
+### Clone the Repository
 ```bash
 git clone https://github.com/cheezecakee/hypesoft-challenge.git
 cd hypesoft-challenge
@@ -69,7 +72,8 @@ cd hypesoft-challenge
 
 --- 
 
-## Using Docker
+### Using Docker
+
 The application can be run locally with Docker Compose, which includes Keycloak, MongoDB, and MongoExpress with preconfigured logging:
 ```bash
 docker-compose up -d```
@@ -90,14 +94,15 @@ docker logs -f mongo-express
 ```
 --- 
 
-## Running Locally (Without Docker)
-### Frontend
+### Running Locally (Without Docker)
+
+#### Frontend
 ```
 cd frontend/hypesoft
 npm install
 npm run dev
 ```
-### Backend
+#### Backend
 ```
 cd backend/Hypesoft.API
 dotnet restore
@@ -110,11 +115,34 @@ Swagger UI: `http://localhost:5000/swagger`
 
 ## Architecture
 
-Backend: Clean Architecture + DDD
-Frontend: Modular structure with reusable components and hooks
+### Backend
+- Pattern: Clean Architecture + DDD
+- Command/Query Handling: CQRS with MediatR
+- Database: MongoDB (Repository pattern, Unit-of-Work if applicable)
+- Validation: FluentValidation for DTOs & commands
+- Mapping: AutoMapper for entity-DTO transformations
+- Logging: Serilog
+- Endpoints: Swagger documentation for API exploration
+- Security: Role-based route protection, Keycloak OAuth2/OpenID Connect
 
-## Dev Mode with Seed Data
-When running the backend in development mode, mock data for products and categories is automatically seeded into MongoDB. This allows you to:
-Quickly test frontend features
+### Frontend
+- Framework: Next.js 14 (App Router) with React 18 + TypeScript
+- Styling: TailwindCSS with shadcn/ui components
+- Forms & Validation: React Hook Form + Zod
+- Data Fetching & Caching: TanStack Query
+- Charts & Dashboards: Recharts
+- Routing & Authentication: Protected routes integrated with Keycloak
+- State Management: Minimal local state + React Query cache
+
+### Additional Notes
+- Modular component structure for reusability
+- Reusable hooks for API interactions
+ 
+--- 
+
+ ## Dev Mode with Seed Data
+ 
+ When running the backend in development mode, mock data for products and categories is automatically seeded into MongoDB. This allows you to:
+ Quickly test frontend features
 Preview dashboards and product/category lists
 Work with realistic example data without manual creation
