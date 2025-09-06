@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { categorySchema, type CategoryFormData } from '@/lib/validation/schemas';
-import type { CreateCategoryDto, UpdateCategoryDto, Category } from '@/types';
+import type { Category } from '@/types';
 
 interface CategoryFormProps {
     initialData?: Category;
-    onSubmit: (data: CreateCategoryDto | UpdateCategoryDto) => Promise<void>;
+    onSubmit: (data: CategoryFormData) => Promise<void>;
     onCancel: () => void;
     isLoading?: boolean;
 }
