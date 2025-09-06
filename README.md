@@ -36,8 +36,6 @@ This project is a full-stack product management system demonstrating modern arch
 - Loading states and toast notifications
 - Responsive design (desktop + mobile)
 
-**⚠️ Note:** Currently, **Product stock update is not available**. All other functionality is operational.
-
 ---
 
 ## Getting Started
