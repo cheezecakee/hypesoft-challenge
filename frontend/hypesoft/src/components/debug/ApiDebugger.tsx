@@ -7,8 +7,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { createProductsApi, createDashboardApi, createCategoriesApi } from '@/services';
 
 export function ApiDebugger() {
-    const [responses, setResponses] = useState<any>({});
-    const [loading, setLoading] = useState<any>({});
+    const [responses, setResponses] = useState<Record<string, any>>({});
+    const [loading, setLoading] = useState<Record<string, boolean>>({});
     const { makeRequest } = useAuth();
 
     const testEndpoint = async (name: string, apiCall: () => Promise<any>) => {
@@ -19,7 +19,8 @@ export function ApiDebugger() {
             setResponses(prev => ({ ...prev, [name]: result }));
         } catch (error) {
             console.error(`${name} error:`, error);
-            setResponses(prev => ({ ...prev, [name]: { error: error.message } }));
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            setResponses(prev => ({ ...prev, [name]: { error: errorMessage } }));
         }
         setLoading(prev => ({ ...prev, [name]: false }));
     };
