@@ -32,6 +32,7 @@ import {
 import { useProducts, useDeleteProduct } from '@/hooks/useProducts';
 import { ProductsPagination } from './ProductsPagination';
 import type { ProductsQueryParams } from '@/types';
+import { formatPrice } from '@/lib/validation/schemas';
 
 interface ProductsTableProps {
     filters: ProductsQueryParams;
@@ -59,7 +60,7 @@ export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) 
                 </CardHeader>
                 <CardContent>
                     <div className="text-center p-8 text-red-600">
-                        Failed to load products
+                        Failed to load products: {error?.message || 'Unknown error'}
                     </div>
                 </CardContent>
             </Card>
@@ -88,7 +89,7 @@ export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) 
         );
     }
 
-    const products = productsData?.data || [];
+    const products = productsData?.products || [];
     const totalCount = productsData?.totalCount || 0;
 
     if (products.length === 0) {
@@ -145,18 +146,20 @@ export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) 
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {product.category?.name || 'No category'}
+                                            {/* Updated to use categoryName from API response */}
+                                            {product.categoryName || 'No category'}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="font-medium">
-                                        ${product.price.toFixed(2)}
+                                        {/* Updated to use formatPrice helper */}
+                                        {formatPrice(product.price, product.currency)}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <span className={product.stockQuantity < 10 ? 'text-orange-600 font-medium' : ''}>
+                                            <span className={product.isLowStock ? 'text-orange-600 font-medium' : ''}>
                                                 {product.stockQuantity}
                                             </span>
-                                            {product.stockQuantity < 10 && (
+                                            {product.isLowStock && (
                                                 <AlertTriangle className="h-4 w-4 text-orange-600" />
                                             )}
                                         </div>
@@ -193,11 +196,11 @@ export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) 
             </Card>
 
             <ProductsPagination
-                currentPage={filters.pageNumber || 1}
+                currentPage={filters.page || 1}
                 pageSize={filters.pageSize || 10}
                 totalCount={totalCount}
-                onPageChange={(page) => onFiltersChange({ pageNumber: page })}
-                onPageSizeChange={(pageSize) => onFiltersChange({ pageSize, pageNumber: 1 })}
+                onPageChange={(page) => onFiltersChange({ page })}
+                onPageSizeChange={(pageSize) => onFiltersChange({ pageSize, page: 1 })}
             />
 
             {/* Delete Confirmation Dialog */}
