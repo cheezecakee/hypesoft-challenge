@@ -132,12 +132,9 @@ export const useUpdateProductStock = () => {
     return useMutation({
         mutationFn: ({ id, stockQuantity }: { id: string; stockQuantity: number }) =>
             productsApi.updateStock(id, stockQuantity),
-        onSuccess: (updatedProduct, { id }) => {
-            // Update the product in cache
-            queryClient.setQueryData(queryKeys.product(id), updatedProduct);
-            // Invalidate products list
+        onSuccess: (_, { id }) => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.product(id) });
             queryClient.invalidateQueries({ queryKey: queryKeys.products });
-            // Invalidate dashboard and low stock
             queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
             queryClient.invalidateQueries({ queryKey: queryKeys.lowStockProducts() });
 
