@@ -7,16 +7,21 @@ namespace Hypesoft.Application.Validators
     {
         public UpdateCategoryCommandValidator()
         {
-            RuleFor(x => x.Id)
-                .NotEmpty().WithMessage("Category ID is required");
+            When(x => !string.IsNullOrWhiteSpace(x.Name), () =>
+            {
+                RuleFor(x => x.Name)
+                    .MaximumLength(100).WithMessage("Category name cannot exceed 100 characters");
+            });
 
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Category name is required")
-                .MaximumLength(100).WithMessage("Category name cannot exceed 100 characters");
+            When(x => x.Description != null, () =>
+            {
+                RuleFor(x => x.Description)
+                    .MaximumLength(500).WithMessage("Description cannot exceed 500 characters");
+            });
 
-            RuleFor(x => x.Description)
-                .NotNull().WithMessage("Description is required");
+            RuleFor(x => x)
+                .Must(x => !string.IsNullOrWhiteSpace(x.Name) || x.Description != null)
+                .WithMessage("At least one field must be provided for update");
         }
     }
 }
-
