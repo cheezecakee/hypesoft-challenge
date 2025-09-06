@@ -1,11 +1,10 @@
 namespace Hypesoft.Application.DTOs.Products
 {
     public record UpdateProductDto(
-        string Id,
-        string Name,
-        string Description,
-        decimal Price,
-        string Currency,
-        string CategoryId
+        string? Name = null,
+        string? Description = null,
+        decimal? Price = null,
+        string? Currency = null,
+        string? CategoryId = null
     );
 }
