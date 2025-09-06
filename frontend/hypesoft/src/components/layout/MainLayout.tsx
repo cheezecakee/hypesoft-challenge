@@ -18,7 +18,6 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
     SidebarProvider,
-    SidebarTrigger,
 } from '@/components/ui/sidebar';
 
 import { UserMenu } from '@/components/auth/UserMenu';
@@ -81,7 +80,6 @@ export function MainLayout({ children }: MainLayoutProps) {
                     <header className="border-b bg-background px-6 py-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <SidebarTrigger />
                                 <h1 className="text-lg font-semibold">
                                     {navigation.find(item => pathname?.startsWith(item.href))?.name || 'Dashboard'}
                                 </h1>
