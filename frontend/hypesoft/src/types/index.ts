@@ -5,9 +5,9 @@ export interface ApiResponse<T> {
 }
 
 export interface PaginatedResponse<T> {
-    data: T[];
+    products: T[];
     totalCount: number;
-    pageNumber: number;
+    page: number;
     pageSize: number;
     totalPages: number;
 }
@@ -17,28 +17,30 @@ export interface Money {
     currency: string;
 }
 
-// Product Types
 export interface Product {
     id: string;
     name: string;
     description: string;
-    price: Money;
+    price: number;
+    currency: string;
     categoryId: string;
+    categoryName: string;
     stockQuantity: number;
-    category?: Category;
+    isLowStock: boolean;
     createdAt: string;
     updatedAt: string;
 }
 
-// Frontend display product
 export interface ProductDisplay {
     id: string;
     name: string;
     description: string;
     price: number;
+    currency: string;
     categoryId: string;
+    categoryName: string;
     stockQuantity: number;
-    category?: Category;
+    isLowStock: boolean;
     createdAt: string;
     updatedAt: string;
 }
@@ -55,11 +57,11 @@ export interface UpdateProductDto {
     name?: string;
     description?: string;
     price?: number;
+    currency?: string;
     categoryId?: string;
     stockQuantity?: number;
 }
 
-// Category Types
 export interface Category {
     id: string;
     name: string;
@@ -78,7 +80,6 @@ export interface UpdateCategoryDto {
     description?: string;
 }
 
-// Dashboard Types
 export interface DashboardStats {
     totalProducts: number;
     totalStockValue: number;
@@ -93,9 +94,8 @@ export interface CategoryStats {
     totalValue: number;
 }
 
-// Query Parameters
 export interface ProductsQueryParams {
-    pageNumber?: number;
+    page?: number;
     pageSize?: number;
     search?: string;
     categoryId?: string;
