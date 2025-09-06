@@ -6,6 +6,7 @@ import { ProductsTable } from '@/components/products/ProductsTable';
 import { ProductsHeader } from '@/components/products/ProductsHeader';
 import { ProductsFilters } from '@/components/products/ProductsFilters';
 import type { ProductsQueryParams } from '@/types';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 
 export default function ProductsPage() {
     const [filters, setFilters] = useState<ProductsQueryParams>({
@@ -26,12 +27,14 @@ export default function ProductsPage() {
     };
 
     return (
-        <MainLayout>
-            <div className="space-y-6">
-                <ProductsHeader />
-                <ProductsFilters filters={filters} onFiltersChange={handleFiltersChange} />
-                <ProductsTable filters={filters} onFiltersChange={handleFiltersChange} />
-            </div>
-        </MainLayout>
+        <ProtectedRoute>
+            <MainLayout>
+                <div className="space-y-6">
+                    <ProductsHeader />
+                    <ProductsFilters filters={filters} onFiltersChange={handleFiltersChange} />
+                    <ProductsTable filters={filters} onFiltersChange={handleFiltersChange} />
+                </div>
+            </MainLayout>
+        </ProtectedRoute>
     );
 }
