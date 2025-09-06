@@ -78,7 +78,7 @@ export const createProductsApi = (makeRequest: ApiFunction) => ({
         const product = await makeRequest<Product>({
             method: 'PATCH',
             url: `/Products/${id}/stock`,
-            data: { stockQuantity },
+            data: { id, stockQuantity },
         });
         return transformProduct(product);
     },
