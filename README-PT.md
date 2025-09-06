@@ -37,8 +37,6 @@ Este projeto é um sistema de gerenciamento de produtos full-stack que demonstra
 - Estados de carregamento e notificações toast
 - Design responsivo (desktop + mobile)
 
-**⚠️ Nota:** Atualmente, a **atualização de estoque de produtos não está disponível**. Todas as outras funcionalidades estão operacionais.
-
 ---
 
 ## Primeiros Passos
