@@ -36,6 +36,44 @@ namespace Hypesoft.Domain.Entities
             SetUpdatedAt();
         }
 
+        public void PartialUpdate(
+            string? name = null,
+            string? description = null,
+            Money? price = null,
+            string? categoryId = null)
+        {
+            bool hasChanges = false;
+
+            if (name != null && name != Name)
+            {
+                SetName(name);
+                hasChanges = true;
+            }
+
+            if (description != null && description != Description)
+            {
+                SetDescription(description);
+                hasChanges = true;
+            }
+
+            if (price != null && !price.Equals(Price))
+            {
+                SetPrice(price);
+                hasChanges = true;
+            }
+
+            if (categoryId != null && categoryId != CategoryId)
+            {
+                SetCategoryId(categoryId);
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+            {
+                SetUpdatedAt();
+            }
+        }
+
         public void UpdateStock(int quantity)
         {
             if (quantity < 0)
