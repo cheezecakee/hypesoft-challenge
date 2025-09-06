@@ -106,7 +106,7 @@ export function LowStockTable() {
                                     </Badge>
                                 </div>
                                 <p className="text-sm text-muted-foreground truncate">
-                                    ${product.price.toFixed(2)} • {product.category?.name || 'No category'}
+                                    ${product.price.toFixed(2)} • {product.categoryName || 'No category'}
                                 </p>
                             </div>
                             <Button asChild size="sm" variant="outline">
