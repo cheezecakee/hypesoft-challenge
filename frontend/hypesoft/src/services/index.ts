@@ -1,5 +1,6 @@
 import {
     Product,
+    ProductDisplay,
     Category,
     CreateProductDto,
     UpdateProductDto,
@@ -8,41 +9,75 @@ import {
     DashboardStats,
     ProductsQueryParams,
     PaginatedResponse,
+    CategoryStats,
 } from '@/types';
 
 // Type for the API function from useAuth
 type ApiFunction = <T = any>(config: any) => Promise<T>;
 
+// Data transformation utilities
+const transformProduct = (product: Product): ProductDisplay => ({
+    ...product,
+    price: product.price?.amount || 0, // Transform Money object to number
+});
+
+const transformProducts = (products: Product[]): ProductDisplay[] =>
+    products.map(transformProduct);
+
+const transformPaginatedProducts = (response: PaginatedResponse<Product>): PaginatedResponse<ProductDisplay> => ({
+    ...response,
+    data: transformProducts(response.data),
+});
+
+// Transform backend DTO for API calls
+const transformCreateProductDto = (data: CreateProductDto) => ({
+    ...data,
+    // Backend expects the price as a number, which gets converted to Money object
+});
+
+const transformUpdateProductDto = (data: UpdateProductDto) => ({
+    ...data,
+    // Backend expects the price as a number, which gets converted to Money object  
+});
+
 export const createProductsApi = (makeRequest: ApiFunction) => ({
-    getProducts: async (params?: ProductsQueryParams): Promise<PaginatedResponse<Product>> => {
-        return makeRequest({
+    getProducts: async (params?: ProductsQueryParams): Promise<PaginatedResponse<ProductDisplay>> => {
+        const response = await makeRequest<PaginatedResponse<Product>>({
             method: 'GET',
             url: '/Products',
-            params,
+            params: {
+                ...params,
+                pageNumber: params?.pageNumber || 1,
+                pageSize: params?.pageSize || 10,
+            },
         });
+        return transformPaginatedProducts(response);
     },
 
-    getProduct: async (id: string): Promise<Product> => {
-        return makeRequest({
+    getProduct: async (id: string): Promise<ProductDisplay> => {
+        const product = await makeRequest<Product>({
             method: 'GET',
             url: `/Products/${id}`,
         });
+        return transformProduct(product);
     },
 
-    createProduct: async (data: CreateProductDto): Promise<Product> => {
-        return makeRequest({
+    createProduct: async (data: CreateProductDto): Promise<ProductDisplay> => {
+        const product = await makeRequest<Product>({
             method: 'POST',
             url: '/Products',
-            data,
+            data: transformCreateProductDto(data),
         });
+        return transformProduct(product);
     },
 
-    updateProduct: async (id: string, data: UpdateProductDto): Promise<Product> => {
-        return makeRequest({
+    updateProduct: async (id: string, data: UpdateProductDto): Promise<ProductDisplay> => {
+        const product = await makeRequest<Product>({
             method: 'PUT',
             url: `/Products/${id}`,
-            data,
+            data: transformUpdateProductDto(data),
         });
+        return transformProduct(product);
     },
 
     deleteProduct: async (id: string): Promise<void> => {
@@ -52,27 +87,30 @@ export const createProductsApi = (makeRequest: ApiFunction) => ({
         });
     },
 
-    updateStock: async (id: string, stockQuantity: number): Promise<Product> => {
-        return makeRequest({
+    updateStock: async (id: string, stockQuantity: number): Promise<ProductDisplay> => {
+        const product = await makeRequest<Product>({
             method: 'PATCH',
             url: `/Products/${id}/stock`,
             data: { stockQuantity },
         });
+        return transformProduct(product);
     },
 
-    searchProducts: async (query: string): Promise<Product[]> => {
-        return makeRequest({
+    searchProducts: async (query: string): Promise<ProductDisplay[]> => {
+        const products = await makeRequest<Product[]>({
             method: 'GET',
             url: '/Products/search',
             params: { query },
         });
+        return transformProducts(products);
     },
 
-    getLowStockProducts: async (): Promise<Product[]> => {
-        return makeRequest({
+    getLowStockProducts: async (): Promise<ProductDisplay[]> => {
+        const products = await makeRequest<Product[]>({
             method: 'GET',
             url: '/Products/low-stock',
         });
+        return transformProducts(products);
     },
 });
 
@@ -123,7 +161,7 @@ export const createDashboardApi = (makeRequest: ApiFunction) => ({
         });
     },
 
-    getProductsByCategory: async (): Promise<{ categoryName: string; count: number }[]> => {
+    getProductsByCategory: async (): Promise<CategoryStats[]> => {
         return makeRequest({
             method: 'GET',
             url: '/Dashboard/products-by-category',
