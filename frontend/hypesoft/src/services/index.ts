@@ -12,13 +12,11 @@ import {
     CategoryStats,
 } from '@/types';
 
-// Type for the API function from useAuth
 type ApiFunction = <T = any>(config: any) => Promise<T>;
 
 // Data transformation utilities
 const transformProduct = (product: Product): ProductDisplay => ({
     ...product,
-    price: product.price?.amount || 0, // Transform Money object to number
 });
 
 const transformProducts = (products: Product[]): ProductDisplay[] =>
@@ -26,18 +24,7 @@ const transformProducts = (products: Product[]): ProductDisplay[] =>
 
 const transformPaginatedProducts = (response: PaginatedResponse<Product>): PaginatedResponse<ProductDisplay> => ({
     ...response,
-    data: transformProducts(response.data),
-});
-
-// Transform backend DTO for API calls
-const transformCreateProductDto = (data: CreateProductDto) => ({
-    ...data,
-    // Backend expects the price as a number, which gets converted to Money object
-});
-
-const transformUpdateProductDto = (data: UpdateProductDto) => ({
-    ...data,
-    // Backend expects the price as a number, which gets converted to Money object  
+    products: transformProducts(response.products),
 });
 
 export const createProductsApi = (makeRequest: ApiFunction) => ({
@@ -47,7 +34,7 @@ export const createProductsApi = (makeRequest: ApiFunction) => ({
             url: '/Products',
             params: {
                 ...params,
-                pageNumber: params?.pageNumber || 1,
+                page: params?.page || 1,
                 pageSize: params?.pageSize || 10,
             },
         });
@@ -66,7 +53,7 @@ export const createProductsApi = (makeRequest: ApiFunction) => ({
         const product = await makeRequest<Product>({
             method: 'POST',
             url: '/Products',
-            data: transformCreateProductDto(data),
+            data,
         });
         return transformProduct(product);
     },
@@ -75,7 +62,7 @@ export const createProductsApi = (makeRequest: ApiFunction) => ({
         const product = await makeRequest<Product>({
             method: 'PUT',
             url: `/Products/${id}`,
-            data: transformUpdateProductDto(data),
+            data,
         });
         return transformProduct(product);
     },
