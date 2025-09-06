@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { productSchema, type ProductFormData } from '@/lib/validation/schemas';
+import { CurrencySelector } from '@/components/ui/currency-selector';
+import { productSchema, type ProductFormData, DEFAULT_CURRENCY } from '@/lib/validation/schemas';
 import type { CreateProductDto, UpdateProductDto, Product, Category } from '@/types';
 
 interface ProductFormProps<T extends CreateProductDto | UpdateProductDto = CreateProductDto | UpdateProductDto> {
@@ -30,6 +31,7 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
         watch,
         reset,
         control,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
@@ -37,6 +39,7 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
             name: initialData?.name || '',
             description: initialData?.description || '',
             price: initialData?.price || 0,
+            currency: initialData?.currency || DEFAULT_CURRENCY,
             categoryId: initialData?.categoryId || '',
             stockQuantity: initialData?.stockQuantity || 0,
         },
@@ -48,6 +51,7 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
                 name: initialData.name,
                 description: initialData.description || '',
                 price: initialData.price,
+                currency: initialData.currency,
                 categoryId: initialData.categoryId,
                 stockQuantity: initialData.stockQuantity,
             });
@@ -55,6 +59,7 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
     }, [initialData, reset]);
 
     const description = watch('description') || '';
+    const currency = watch('currency');
     const isProcessing = isLoading || isSubmitting;
 
     const onFormSubmit = async (data: ProductFormData) => {
@@ -63,6 +68,7 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
                 name: data.name,
                 description: data.description || undefined,
                 price: data.price,
+                currency: data.currency,
                 categoryId: data.categoryId,
                 stockQuantity: data.stockQuantity,
             } as T);
@@ -74,7 +80,6 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
     return (
         <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Name */}
                 <div className="space-y-2">
                     <Label htmlFor="name">Product Name <span className="text-red-500">*</span></Label>
                     <Input
@@ -88,7 +93,6 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
                     {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                 </div>
 
-                {/* Category */}
                 <div className="space-y-2">
                     <Label htmlFor="categoryId">Category <span className="text-red-500">*</span></Label>
                     <Controller
@@ -114,9 +118,8 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
                     {errors.categoryId && <p className="text-sm text-red-500">{errors.categoryId.message}</p>}
                 </div>
 
-                {/* Price */}
                 <div className="space-y-2">
-                    <Label htmlFor="price">Price ($) <span className="text-red-500">*</span></Label>
+                    <Label htmlFor="price">Price <span className="text-red-500">*</span></Label>
                     <Input
                         id="price"
                         type="number"
@@ -130,7 +133,13 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
                     {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
                 </div>
 
-                {/* Stock */}
+                <CurrencySelector
+                    value={currency}
+                    onValueChange={(value) => setValue('currency', value)}
+                    error={errors.currency?.message}
+                    required
+                />
+
                 <div className="space-y-2">
                     <Label htmlFor="stockQuantity">Stock Quantity <span className="text-red-500">*</span></Label>
                     <Input
@@ -146,7 +155,6 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
                 </div>
             </div>
 
-            {/* Description */}
             <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -172,4 +180,3 @@ export function ProductForm<T extends CreateProductDto | UpdateProductDto = Crea
         </form>
     );
 }
-
