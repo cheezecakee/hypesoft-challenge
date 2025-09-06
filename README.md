@@ -1,54 +1,98 @@
-# Hypesoft Challenge
-
-This repository contains a full-stack take-home project for a candidate applying for a Full Stack Developer position.
+# Hypesoft Product Management System
 
 ## Overview
 
-The application is a **ShopSense-style dashboard** with product and inventory management features. It demonstrates modern frontend and backend development practices, Clean Architecture, and DDD patterns.
+This project is a full-stack product management system demonstrating modern architecture, clean code practices, and advanced frontend/backend integration.
 
-## Features
+- **Backend:** .NET 9, Clean Architecture, DDD, CQRS, MediatR, MongoDB, FluentValidation, AutoMapper, Serilog  
+- **Frontend:** Next.js 14 (App Router), React 18, TypeScript, TailwindCSS + shadcn/ui, TanStack Query, React Hook Form + Zod, Recharts  
+- **Authentication:** Keycloak (OAuth2 / OpenID Connect)
 
-### Product Management
-- CRUD operations for products
-- Product fields: name, description, price, category, stock quantity
-- Basic search and filter by category
+---
 
-### Category System
-- CRUD operations for categories
-- Association with products
-
-### Inventory Control
-- Manage stock quantities
-- Highlight low-stock products (<10 units)
-
-### Dashboard
-- Total products
-- Total stock value
-- Low-stock products list
-- Products by category chart
-
-### Authentication
-- Keycloak integration (OAuth2/OpenID Connect)
-- Route protection and role-based access
-
-## Tech Stack
-
-### Frontend
-- React 18 + TypeScript
-- Vite / Next.js 14
-- TailwindCSS + Shadcn/ui
-- React Query / TanStack Query
-- React Hook Form + Zod
-- Recharts / Chart.js
+## Features Implemented
 
 ### Backend
-- .NET 9 + C#
-- Clean Architecture + DDD
-- CQRS + MediatR
-- Entity Framework Core + MongoDB
-- FluentValidation, AutoMapper, Serilog
+- CRUD operations for Products and Categories
+- Product entity includes **stock quantity** and `IsLowStock` flag
+- Role-based route protection (Admin, Manager, User)
+- Swagger API documentation
+- Health check endpoints
+- Validation via FluentValidation
+- Logging via Serilog
+- CQRS + MediatR pattern for commands and queries
+- MongoDB repository implementation
 
-### Infrastructure
-- MongoDB
-- Keycloak
-- Docker + Docker Compose
+### Frontend
+- Login/logout pages integrated with Keycloak
+- Protected routes for role-based access
+- Dashboard with stats cards and charts
+- Product and category list, create, edit, delete pages
+- Filters and search for products
+- Reusable form components with React Hook Form + Zod
+- Client-side validation + server-side validation handling
+- Loading states and toast notifications
+- Responsive design (desktop + mobile)
+
+**⚠️ Note:** Product **stock quantity field** is implemented in the backend but **not yet fully wired on the frontend**. Low-stock indicators and stock update forms still need to be integrated.
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Docker Desktop 4.0+  
+- Node.js 18+  
+- .NET 9 SDK  
+- Git  
+
+### Environment Variables
+
+Frontend and backend require environment variables for API URLs and Keycloak integration:
+
+```bash
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
+NEXT_PUBLIC_KEYCLOAK_REALM=Hypesoft
+NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend
+
+--- 
+
+## Installation 
+### **Clone the Repository**
+```bash
+git clone https://github.com/cheezecakee/hypesoft-challenge.git
+cd hypesoft-challenge```
+
+## Using Docker
+The application can be run locally with Docker Compose:
+
+```bash
+docker-compose up -d```
+
+
+## Running Locally (Without Docker)
+Frontend
+```
+cd frontend/hypesoft
+npm install
+npm run dev
+```
+
+```
+cd backend/Hypesoft.API
+dotnet restore
+dotnet run
+```
+
+Swagger UI: `http://localhost:5000/swagger`
+
+---
+
+## Architecture
+
+Backend: Clean Architecture + DDD
+Frontend: Modular structure with reusable components and hooks
+
+
