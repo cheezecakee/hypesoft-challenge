@@ -34,7 +34,7 @@ This project is a full-stack product management system demonstrating modern arch
 - Loading states and toast notifications
 - Responsive design (desktop + mobile)
 
-**⚠️ Note:** Product **stock quantity field** is implemented in the backend but **not yet fully wired on the frontend**. Low-stock indicators and stock update forms still need to be integrated.
+**⚠️ Note:** Currently, **Product and Category edit pages are not available**. All other functionality is operational.
 
 ---
 
@@ -55,31 +55,49 @@ Frontend and backend require environment variables for API URLs and Keycloak int
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
 NEXT_PUBLIC_KEYCLOAK_REALM=Hypesoft
-NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend
+NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=frontend```
 
 --- 
 
-## Installation 
-### **Clone the Repository**
+# Installation
+
+## Clone the Repository
 ```bash
 git clone https://github.com/cheezecakee/hypesoft-challenge.git
-cd hypesoft-challenge```
+cd hypesoft-challenge
+```
+
+--- 
 
 ## Using Docker
-The application can be run locally with Docker Compose:
-
+The application can be run locally with Docker Compose, which includes Keycloak, MongoDB, and MongoExpress with preconfigured logging:
 ```bash
 docker-compose up -d```
 
+Access services:
+Keycloak Admin Console: `http://localhost:8080`
+- Username: admin
+- Password: admin123
+MongoExpress UI: `http://localhost:8081`
+- Username: admin
+- Password: admin
+
+Docker logs for each service can be viewed with:
+```
+docker logs -f hypesoft-keycloak
+docker logs -f hypesoft-mongo
+docker logs -f mongo-express
+```
+--- 
 
 ## Running Locally (Without Docker)
-Frontend
+### Frontend
 ```
 cd frontend/hypesoft
 npm install
 npm run dev
 ```
-
+### Backend
 ```
 cd backend/Hypesoft.API
 dotnet restore
@@ -95,4 +113,8 @@ Swagger UI: `http://localhost:5000/swagger`
 Backend: Clean Architecture + DDD
 Frontend: Modular structure with reusable components and hooks
 
-
+## Dev Mode with Seed Data
+When running the backend in development mode, mock data for products and categories is automatically seeded into MongoDB. This allows you to:
+Quickly test frontend features
+Preview dashboards and product/category lists
+Work with realistic example data without manual creation
