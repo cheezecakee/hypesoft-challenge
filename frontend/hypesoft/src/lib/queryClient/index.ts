@@ -23,19 +23,24 @@ export const queryClient = new QueryClient({
 });
 
 export const queryKeys = {
+    // Products
     products: ['products'] as const,
     productsList: (params?: any) => [...queryKeys.products, 'list', params] as const,
     product: (id: string) => [...queryKeys.products, 'detail', id] as const,
     productsSearch: (query: string) => [...queryKeys.products, 'search', query] as const,
     lowStockProducts: () => [...queryKeys.products, 'low-stock'] as const,
 
+    // Categories  
     categories: ['categories'] as const,
     categoriesList: () => [...queryKeys.categories, 'list'] as const,
     category: (id: string) => [...queryKeys.categories, 'detail', id] as const,
 
+    // Dashboard
     dashboard: ['dashboard'] as const,
     dashboardStats: () => [...queryKeys.dashboard, 'stats'] as const,
     productsByCategory: () => [...queryKeys.dashboard, 'products-by-category'] as const,
 
+    // Health
     health: ['health'] as const,
-} as const;
+    healthCheck: () => [...queryKeys.health, 'check'] as const,
+};
