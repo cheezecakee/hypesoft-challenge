@@ -64,18 +64,18 @@ TestResults/
 # ------------------------
 # Node / Frontend
 # ------------------------
-/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.js
 .yarn/install-state.gz
 
 # Next.js
-/.next/
-/out/
-/build
+.next/
+out/
+build
 
 # Testing
-/coverage
+coverage
 
 # Debug logs
 npm-debug.log*

@@ -96,7 +96,7 @@ docker logs -f mongo-express
 
 #### Frontend
 ```
-cd frontend/hypesoft
+cd frontend/
 npm install
 npm run dev
 ```
