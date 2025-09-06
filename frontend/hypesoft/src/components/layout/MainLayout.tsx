@@ -5,32 +5,23 @@ import {
     LayoutDashboard,
     Package,
     Tags,
-    LogOut,
-    User
 } from 'lucide-react';
 
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuButton,
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { UserMenu } from '@/components/auth/UserMenu';
 
 const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -84,51 +75,22 @@ export function MainLayout({ children }: MainLayoutProps) {
                             </SidebarGroupContent>
                         </SidebarGroup>
                     </SidebarContent>
-
-                    <SidebarFooter>
-                        <SidebarMenu>
-                            <SidebarMenuItem>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <SidebarMenuButton>
-                                            <Avatar className="w-6 h-6">
-                                                <AvatarImage src="" alt="User" />
-                                                <AvatarFallback>DU</AvatarFallback>
-                                            </Avatar>
-                                            <div className="text-left text-sm">
-                                                <div className="font-medium">Demo User</div>
-                                                <div className="text-xs text-muted-foreground">demo@hypesoft.com</div>
-                                            </div>
-                                        </SidebarMenuButton>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent side="top" className="w-56">
-                                        <DropdownMenuItem>
-                                            <User className="mr-2 h-4 w-4" />
-                                            Profile
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem>
-                                            <LogOut className="mr-2 h-4 w-4" />
-                                            Sign Out
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </SidebarMenuItem>
-                        </SidebarMenu>
-                    </SidebarFooter>
                 </Sidebar>
 
                 <div className="flex-1 flex flex-col">
-                    {/* Header */}
                     <header className="border-b bg-background px-6 py-3">
-                        <div className="flex items-center gap-4">
-                            <SidebarTrigger />
-                            <h1 className="text-lg font-semibold">
-                                {navigation.find(item => pathname?.startsWith(item.href))?.name || 'Dashboard'}
-                            </h1>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <SidebarTrigger />
+                                <h1 className="text-lg font-semibold">
+                                    {navigation.find(item => pathname?.startsWith(item.href))?.name || 'Dashboard'}
+                                </h1>
+                            </div>
+                            <div className="ml-auto">
+                                <UserMenu />
+                            </div>
                         </div>
                     </header>
-
-                    {/* Main content */}
                     <main className="flex-1 p-6">
                         {children}
                     </main>
