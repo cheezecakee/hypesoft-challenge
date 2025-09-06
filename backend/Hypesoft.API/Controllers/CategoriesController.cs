@@ -27,9 +27,9 @@ namespace Hypesoft.API.Controllers
         {
             var query = new GetCategoryByIdQuery(id);
             var result = await _mediator.Send(query);
-            if (result == null)
-                return NotFound($"Category with ID {id} not found");
-            return Ok(result);
+            return (result == null)
+                ? NotFound($"Category with ID {id} not found")
+                : Ok(result);
         }
 
         [HttpPost]
@@ -42,14 +42,22 @@ namespace Hypesoft.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Policy = "ManagerOrAdmin")]
-        public async Task<ActionResult<CategoryDto>> UpdateCategory(string id, UpdateCategoryCommand command)
+        public async Task<ActionResult<CategoryDto>> UpdateCategory(string id, [FromBody] UpdateCategoryDto dto)
         {
-            if (id != command.Id)
-                return BadRequest("Category ID mismatch");
-
+            var command = new UpdateCategoryCommand(id, dto.Name, dto.Description);
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+
+        [HttpPatch("{id}")]
+        [Authorize(Policy = "ManagerOrAdmin")]
+        public async Task<ActionResult<CategoryDto>> PatchCategory(string id, [FromBody] UpdateCategoryDto dto)
+        {
+            var command = new UpdateCategoryCommand(id, dto.Name, dto.Description);
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "AdminOnly")]
