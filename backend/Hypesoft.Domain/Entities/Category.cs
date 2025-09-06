@@ -25,6 +25,28 @@ namespace Hypesoft.Domain.Entities
             SetUpdatedAt();
         }
 
+        public void PartialUpdate(string? name = null, string? description = null)
+        {
+            bool hasChanges = false;
+
+            if (name != null && name != Name)
+            {
+                SetName(name);
+                hasChanges = true;
+            }
+
+            if (description != null && description != Description)
+            {
+                SetDescription(description);
+                hasChanges = true;
+            }
+
+            if (hasChanges)
+            {
+                SetUpdatedAt();
+            }
+        }
+
         private void SetName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
