@@ -107,6 +107,7 @@ export function ProductsByCategoryChart() {
                                 cx="50%"
                                 cy="50%"
                                 outerRadius={80}
+                                innerRadius={60}
                                 dataKey="value"
                                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                             >
