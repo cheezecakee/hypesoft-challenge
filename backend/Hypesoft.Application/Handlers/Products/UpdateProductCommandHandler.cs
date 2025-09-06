@@ -20,17 +20,33 @@ namespace Hypesoft.Application.Handlers.Products
         public async Task<ProductDto> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             Product product = await _productRepository.GetByIdAsync(request.Id, cancellationToken)
-                ?? throw new ArgumentException($"Product with ID {request.Id} not found");
+                ?? throw new KeyNotFoundException($"Product with ID {request.Id} not found");
 
-            // Verify category exists
-            bool categoryExists = await _categoryRepository.ExistsAsync(request.CategoryId, cancellationToken);
-            if (!categoryExists)
+            if (!string.IsNullOrWhiteSpace(request.CategoryId))
             {
-                throw new ArgumentException($"Category with ID {request.CategoryId} does not exist");
+                bool categoryExists = await _categoryRepository.ExistsAsync(request.CategoryId, cancellationToken);
+                if (!categoryExists)
+                {
+                    throw new InvalidOperationException($"Category with ID {request.CategoryId} does not exist");
+                }
             }
 
-            Money price = new(request.Price, request.Currency);
-            product.Update(request.Name, request.Description, price, request.CategoryId);
+            // Handle price update - create new Money object if price or currency is being updated
+            Money? priceToUpdate = null;
+            if (request.Price.HasValue || !string.IsNullOrWhiteSpace(request.Currency))
+            {
+                decimal priceValue = request.Price ?? product.Price.Amount;
+                string currencyValue = !string.IsNullOrWhiteSpace(request.Currency)
+                    ? request.Currency
+                    : product.Price.Currency;
+                priceToUpdate = new Money(priceValue, currencyValue);
+            }
+
+            product.PartialUpdate(
+                request.Name,
+                request.Description,
+                priceToUpdate,
+                request.CategoryId);
 
             Product updatedProduct = await _productRepository.UpdateAsync(product, cancellationToken);
             // Get the product with category for mapping
@@ -39,4 +55,3 @@ namespace Hypesoft.Application.Handlers.Products
         }
     }
 }
-
