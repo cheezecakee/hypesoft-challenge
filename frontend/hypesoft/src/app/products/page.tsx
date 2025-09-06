@@ -9,7 +9,7 @@ import type { ProductsQueryParams } from '@/types';
 
 export default function ProductsPage() {
     const [filters, setFilters] = useState<ProductsQueryParams>({
-        pageNumber: 1,
+        page: 1,
         pageSize: 10,
         search: '',
         categoryId: '',
@@ -21,7 +21,7 @@ export default function ProductsPage() {
         setFilters(prev => ({
             ...prev,
             ...newFilters,
-            pageNumber: newFilters.pageNumber ?? 1, // Reset to first page when filtering
+            page: newFilters.page ?? 1,
         }));
     };
 

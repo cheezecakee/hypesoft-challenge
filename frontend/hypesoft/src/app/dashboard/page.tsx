@@ -5,7 +5,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { StatsCards } from '@/components/dashboard/StatsCards';
 import { ProductsByCategoryChart } from '@/components/dashboard/ProductsByCategoryChart';
 import { LowStockTable } from '@/components/dashboard/LowStockTable';
-import { ApiDebugger } from '@/components/debug/ApiDebugger';
+// import { ApiDebugger } from '@/components/debug/ApiDebugger';
 
 export default function DashboardPage() {
     return (
@@ -20,7 +20,7 @@ export default function DashboardPage() {
                         </p>
                     </div>
 
-                    <ApiDebugger />
+                    {/* <ApiDebugger /> */}
 
                     {/* Stats cards */}
                     <StatsCards />
