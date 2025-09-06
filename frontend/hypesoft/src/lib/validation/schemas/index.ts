@@ -1,5 +1,33 @@
 import { z } from 'zod';
 
+export const SUPPORTED_CURRENCIES = [
+    { code: 'USD', name: 'US Dollar', symbol: '$' },
+    { code: 'EUR', name: 'Euro', symbol: '€' },
+    { code: 'GBP', name: 'British Pound', symbol: '£' },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+    { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+    { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+    { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+    { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+    { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+] as const;
+
+export const CURRENCY_CODES = SUPPORTED_CURRENCIES.map(c => c.code);
+export const DEFAULT_CURRENCY = 'USD';
+
+// Helper function to get currency symbol
+export const getCurrencySymbol = (currencyCode: string): string => {
+    const currency = SUPPORTED_CURRENCIES.find(c => c.code === currencyCode);
+    return currency?.symbol || currencyCode;
+};
+
+// Helper function to format price with currency
+export const formatPrice = (price: number, currency: string): string => {
+    const symbol = getCurrencySymbol(currency);
+    return `${symbol}${price.toFixed(2)}`;
+};
+
 // Category schemas
 export const categorySchema = z.object({
     name: z
@@ -35,6 +63,11 @@ export const productSchema = z.object({
         .min(0.01, 'Price must be greater than 0')
         .max(999999.99, 'Price is too high')
         .multipleOf(0.01, 'Price must have at most 2 decimal places'),
+    currency: z
+        .string()
+        .refine((val) => CURRENCY_CODES.includes(val as any), {
+            message: `Currency must be one of: ${CURRENCY_CODES.join(', ')}`,
+        }),
     categoryId: z
         .string()
         .min(1, 'Please select a category'),
@@ -60,6 +93,7 @@ export const stockUpdateSchema = z.object({
 export const productSearchSchema = z.object({
     search: z.string().optional(),
     categoryId: z.string().optional(),
+    currency: z.string().optional(),
     minPrice: z.number().min(0).optional(),
     maxPrice: z.number().min(0).optional(),
     inStock: z.boolean().optional(),
@@ -74,3 +108,4 @@ export type ProductFormData = z.infer<typeof productSchema>;
 export type UpdateProductFormData = z.infer<typeof updateProductSchema>;
 export type StockUpdateFormData = z.infer<typeof stockUpdateSchema>;
 export type ProductSearchData = z.infer<typeof productSearchSchema>;
+export type SupportedCurrency = typeof SUPPORTED_CURRENCIES[number];
