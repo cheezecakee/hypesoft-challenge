@@ -34,7 +34,7 @@ export function ProductsFilters({ filters, onFiltersChange }: ProductsFiltersPro
             categoryId: '',
             sortBy: 'name',
             sortOrder: 'asc',
-            pageNumber: 1,
+            page: 1,
         });
     };
 
