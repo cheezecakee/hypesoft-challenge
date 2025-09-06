@@ -31,11 +31,9 @@ namespace Hypesoft.API.Controllers
         {
             GetProductByIdQuery query = new(id);
             ProductDto? result = await _mediator.Send(query);
-            if (result == null)
-            {
-                return NotFound($"Product with ID {id} not found");
-            }
-            return Ok(result);
+            return result == null
+                ? NotFound($"Product with ID {id} not found")
+                : Ok(result);
         }
 
         [HttpPost]
@@ -47,15 +45,32 @@ namespace Hypesoft.API.Controllers
         }
 
         [HttpPut("{id}")]
-        // [Authorize(Policy = "ManagerOrAdmin")]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(string id, UpdateProductCommand command)
+        [Authorize(Policy = "ManagerOrAdmin")]
+        public async Task<ActionResult<ProductDto>> UpdateProduct(string id, [FromBody] UpdateProductDto dto)
         {
-            if (id != command.Id)
-            {
-                return BadRequest("Product ID mismatch");
-            }
+            var command = new UpdateProductCommand(
+                id,
+                dto.Name,
+                dto.Description,
+                dto.Price,
+                dto.Currency,
+                dto.CategoryId);
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
 
-            ProductDto result = await _mediator.Send(command);
+        [HttpPatch("{id}")]
+        [Authorize(Policy = "ManagerOrAdmin")]
+        public async Task<ActionResult<ProductDto>> PatchProduct(string id, [FromBody] UpdateProductDto dto)
+        {
+            var command = new UpdateProductCommand(
+                id,
+                dto.Name,
+                dto.Description,
+                dto.Price,
+                dto.Currency,
+                dto.CategoryId);
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
 
