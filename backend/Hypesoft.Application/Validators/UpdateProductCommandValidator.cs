@@ -42,10 +42,17 @@ namespace Hypesoft.Application.Validators
                     .NotEmpty().WithMessage("Category ID cannot be empty when provided");
             });
 
-            RuleFor(x => x)
-                .Must(x => x.Name != null || x.Description != null ||
-                          x.Price.HasValue || x.CategoryId != null)
-                .WithMessage("At least one field must be provided for update");
+            When(x => x.StockQuantity != null, () =>
+            {
+                RuleFor(x => x.StockQuantity)
+                .GreaterThanOrEqualTo(0).WithMessage("Quantity cannot be below zero");
+
+            });
+
+           RuleFor(x => x)
+               .Must(x => x.Name != null || x.Description != null ||
+                       x.Price.HasValue || x.CategoryId != null || x.StockQuantity.HasValue)
+               .WithMessage("At least one field must be provided for update");        
         }
     }
 }

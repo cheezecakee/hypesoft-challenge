@@ -48,13 +48,15 @@ namespace Hypesoft.API.Controllers
         [Authorize(Policy = "ManagerOrAdmin")]
         public async Task<ActionResult<ProductDto>> UpdateProduct(string id, [FromBody] UpdateProductDto dto)
         {
-            var command = new UpdateProductCommand(
+            UpdateProductCommand command = new(
                 id,
                 dto.Name,
                 dto.Description,
                 dto.Price,
                 dto.Currency,
-                dto.CategoryId);
+                dto.CategoryId,
+                dto.StockQuantity
+                );
             var result = await _mediator.Send(command);
             return Ok(result);
         }
@@ -63,13 +65,15 @@ namespace Hypesoft.API.Controllers
         [Authorize(Policy = "ManagerOrAdmin")]
         public async Task<ActionResult<ProductDto>> PatchProduct(string id, [FromBody] UpdateProductDto dto)
         {
-            var command = new UpdateProductCommand(
+            UpdateProductCommand command = new(
                 id,
                 dto.Name,
                 dto.Description,
                 dto.Price,
                 dto.Currency,
-                dto.CategoryId);
+                dto.CategoryId,
+                dto.StockQuantity
+                );
             var result = await _mediator.Send(command);
             return Ok(result);
         }

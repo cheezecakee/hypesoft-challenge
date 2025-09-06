@@ -57,7 +57,7 @@ namespace Hypesoft.Infrastructure.Services
                     CategoryId: category.Id,
                     CategoryName: category.Name,
                     ProductCount: hasProducts ? productData.ProductCount : 0,
-                    TotalValue: hasProducts ? productData.TotalValue : 0m
+                    TotalValue: hasProducts ? productData.TotalValue : 0
                 );
             });
 

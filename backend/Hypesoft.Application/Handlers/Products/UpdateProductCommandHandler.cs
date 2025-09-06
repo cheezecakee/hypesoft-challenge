@@ -22,6 +22,7 @@ namespace Hypesoft.Application.Handlers.Products
             Product product = await _productRepository.GetByIdAsync(request.Id, cancellationToken)
                 ?? throw new KeyNotFoundException($"Product with ID {request.Id} not found");
 
+            // Only verify category exists if categoryId is being updated
             if (!string.IsNullOrWhiteSpace(request.CategoryId))
             {
                 bool categoryExists = await _categoryRepository.ExistsAsync(request.CategoryId, cancellationToken);
@@ -46,7 +47,9 @@ namespace Hypesoft.Application.Handlers.Products
                 request.Name,
                 request.Description,
                 priceToUpdate,
-                request.CategoryId);
+                request.CategoryId,
+                request.StockQuantity
+                );
 
             Product updatedProduct = await _productRepository.UpdateAsync(product, cancellationToken);
             // Get the product with category for mapping

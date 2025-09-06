@@ -9,6 +9,7 @@ namespace Hypesoft.Application.Commands.Products
         string? Description = null,
         decimal? Price = null,
         string? Currency = null,
-        string? CategoryId = null
+        string? CategoryId = null,
+        int? StockQuantity = null
     ) : IRequest<ProductDto>;
 }

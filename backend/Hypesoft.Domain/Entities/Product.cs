@@ -27,12 +27,13 @@ namespace Hypesoft.Domain.Entities
             SetStockQuantity(stockQuantity);
         }
 
-        public void Update(string name, string description, Money price, string categoryId)
+        public void Update(string name, string description, Money price, string categoryId, int stockQuantity)
         {
             SetName(name);
             SetDescription(description);
             SetPrice(price);
             SetCategoryId(categoryId);
+            SetStockQuantity(stockQuantity);
             SetUpdatedAt();
         }
 
@@ -40,7 +41,8 @@ namespace Hypesoft.Domain.Entities
             string? name = null,
             string? description = null,
             Money? price = null,
-            string? categoryId = null)
+            string? categoryId = null,
+            int? stockQuantity = null)
         {
             bool hasChanges = false;
 
@@ -65,6 +67,12 @@ namespace Hypesoft.Domain.Entities
             if (categoryId != null && categoryId != CategoryId)
             {
                 SetCategoryId(categoryId);
+                hasChanges = true;
+            }
+
+            if (stockQuantity.HasValue && stockQuantity.Value != StockQuantity)
+            {
+                SetStockQuantity(stockQuantity.Value);
                 hasChanges = true;
             }
 
