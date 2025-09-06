@@ -1,6 +1,6 @@
 'use client';
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useProductsByCategory } from '@/hooks/useDashboard';
@@ -68,20 +68,21 @@ export function ProductsByCategoryChart() {
         );
     }
 
-    // Transform data for recharts
+    // Transform data for recharts - use productCount instead of count
     const pieData = chartData.map((item) => ({
         name: item.categoryName,
-        value: item.count,
+        value: item.productCount,
     }));
 
     const CustomTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
             const data = payload[0];
+            const totalProducts = chartData.reduce((sum, item) => sum + item.productCount, 0);
             return (
                 <div className="bg-white p-3 border rounded-lg shadow-lg">
                     <p className="font-medium">{data.name}</p>
                     <p className="text-sm text-muted-foreground">
-                        {data.value} products ({((data.value / chartData.reduce((sum, item) => sum + item.count, 0)) * 100).toFixed(1)}%)
+                        {data.value} products ({((data.value / totalProducts) * 100).toFixed(1)}%)
                     </p>
                 </div>
             );
@@ -109,7 +110,7 @@ export function ProductsByCategoryChart() {
                                 dataKey="value"
                                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                             >
-                                {pieData.map((entry, index) => (
+                                {pieData.map((_entry, index) => (
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={COLORS[index % COLORS.length]}

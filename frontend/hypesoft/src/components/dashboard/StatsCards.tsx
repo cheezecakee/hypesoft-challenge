@@ -3,10 +3,16 @@
 import { Package, DollarSign, AlertTriangle, Tags } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useDashboardStats } from '@/hooks/useDashboard';
+import { useDashboardStats, useLowStockProducts } from '@/hooks/useDashboard';
+import { useCategories } from '@/hooks/useCategories';
 
 export function StatsCards() {
-    const { data: stats, isLoading, error } = useDashboardStats();
+    const { data: stats, isLoading: statsLoading, error: statsError } = useDashboardStats();
+    const { data: lowStockProducts, isLoading: lowStockLoading } = useLowStockProducts();
+    const { data: categories, isLoading: categoriesLoading } = useCategories();
+
+    const isLoading = statsLoading || lowStockLoading || categoriesLoading;
+    const error = statsError;
 
     if (error) {
         return (
@@ -57,7 +63,7 @@ export function StatsCards() {
         },
         {
             title: 'Low Stock Items',
-            value: stats?.lowStockProducts?.length || 0,
+            value: lowStockProducts?.length || stats?.lowStockProductCount || 0,
             description: 'Products with < 10 units',
             icon: AlertTriangle,
             color: 'text-orange-600',
@@ -65,7 +71,7 @@ export function StatsCards() {
         },
         {
             title: 'Categories',
-            value: stats?.categoriesStats?.length || 0,
+            value: categories?.length || stats?.totalCategories || 0,
             description: 'Product categories',
             icon: Tags,
             color: 'text-purple-600',
