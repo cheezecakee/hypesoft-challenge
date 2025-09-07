@@ -88,6 +88,7 @@ builder.Services.AddRateLimiter(options =>
     };
 });
 
+
 // JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -96,6 +97,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         var realm = builder.Configuration["Keycloak:Realm"];
         var clientId = builder.Configuration["Keycloak:ClientId"];
 
+
+        var validIssuers = new[]
+        {
+            $"{keycloakUrl}/realms/{realm}",           // Container network
+            $"http://localhost:8080/realms/{realm}"    // Host network
+        };
+
         options.Authority = $"{keycloakUrl}/realms/{realm}";
         options.Audience = clientId;
         options.RequireHttpsMetadata = false; // dev only
@@ -103,7 +111,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = $"{keycloakUrl}/realms/{realm}",
+            ValidIssuers = validIssuers,
+            // ValidIssuer = $"{keycloakUrl}/realms/{realm}",
             ValidateAudience = true,
             ValidAudience = clientId,
             ValidateLifetime = true,
