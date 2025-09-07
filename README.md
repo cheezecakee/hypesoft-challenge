@@ -136,6 +136,8 @@ curl -X POST "http://localhost:8080/realms/hypesoft/protocol/openid-connect/toke
   -d "username=user@hypesoft.com" \
   -d "password=user123"
 ```
+> **⚠️ Security Note:** These credentials are for development/testing only. Never use these in production environments.
+
 ⚠️ **Important:** If running the backend in Docker, Keycloak is also in Docker. To get a token, you must run curl inside the same Docker network:
 ```bash
 docker run --rm --network hypesoft-challenge_default curlimages/curl:latest \
