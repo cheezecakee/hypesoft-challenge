@@ -90,25 +90,28 @@ services:
       - backend
       - full
 
-  # Frontend service
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: hypesoft-frontend
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     NEXT_PUBLIC_API_URL: http://localhost:5113
-  #     NEXT_PUBLIC_KEYCLOAK_URL: http://localhost:8080
-  #     NEXT_PUBLIC_KEYCLOAK_REALM: hypesoft
-  #     NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: hypesoft-frontend
-  #   depends_on:
-  #     - backend
-  #     - keycloak
-  #   profiles:
-  #     - frontend
-  #     - full
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hypesoft-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5113/api
+      NEXT_PUBLIC_KEYCLOAK_URL: http://localhost:8080
+      NEXT_PUBLIC_KEYCLOAK_REALM: hypesoft
+      NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: hypesoft-frontend
+      NODE_ENV: development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+      - keycloak
+    profiles:
+      - frontend
+      - full
   
 volumes:
   keycloak_data:
