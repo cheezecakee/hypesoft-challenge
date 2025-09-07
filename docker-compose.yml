@@ -6,11 +6,22 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HTTP_PORT: 8080
+      # Import realm on startup
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/realm-export.json
     ports:
       - "8080:8080"
-    command: start-dev
+    command: 
+      - start-dev
+      - --import-realm
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     volumes:
       - keycloak_data:/opt/keycloak/data
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
 
   mongodb:
     image: mongo:7.0
@@ -19,6 +30,12 @@ services:
       - "27017:27017"
     environment:
       MONGO_INITDB_DATABASE: HypesoftDB
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     volumes:
       - mongodb_data:/data/db
 
@@ -35,7 +52,64 @@ services:
     depends_on:
       - mongodb
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hypesoft-backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:5113
+
+      # Logs
+      ASPNETCORE_LOGGING__LogLevel__Default: Debug
+      ASPNETCORE_LOGGING__LogLevel__Microsoft: Information
+
+      # MongoDB
+      ConnectionStrings__DefaultConnection: mongodb://mongodb:27017
+
+      # Keycloak - Using container network for internal communication
+      Keycloak__Authority: http://keycloak:8080
+      Keycloak__MetadataAddress: http://keycloak:8080/realms/hypesoft/.well-known/openid-configuration
+      Keycloak__Realm: hypesoft
+      Keycloak__ClientId: hypesoft-api
+      Keycloak__ClientSecret: dLGltIUV18VMwomohmQsfa3blaOehFR0
+      Keycloak__RequireHttpsMetadata: false
+      Keycloak__ValidateIssuer: false
+      
+      # CORS for frontend
+      AllowedOrigins: http://localhost:3000
+    ports:
+      - "5113:5113"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+    profiles:
+      - backend
+      - full
+
+  # Frontend service
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: hypesoft-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     NEXT_PUBLIC_API_URL: http://localhost:5113
+  #     NEXT_PUBLIC_KEYCLOAK_URL: http://localhost:8080
+  #     NEXT_PUBLIC_KEYCLOAK_REALM: hypesoft
+  #     NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: hypesoft-frontend
+  #   depends_on:
+  #     - backend
+  #     - keycloak
+  #   profiles:
+  #     - frontend
+  #     - full
+  
 volumes:
   keycloak_data:
   mongodb_data:
-
