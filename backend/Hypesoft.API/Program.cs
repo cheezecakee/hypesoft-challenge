@@ -234,3 +234,5 @@ app.MapHealthChecks("/health/detailed", new Microsoft.AspNetCore.Diagnostics.Hea
 
 Log.Information("Starting Hypesoft API...");
 app.Run();
+
+public partial class Program { }

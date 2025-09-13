@@ -59,7 +59,7 @@ services:
     container_name: hypesoft-backend
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:5113
+      ASPNETCORE_URLS: http://+:5000
 
       # Logs
       ASPNETCORE_LOGGING__LogLevel__Default: Debug
@@ -80,7 +80,7 @@ services:
       # CORS for frontend
       AllowedOrigins: http://localhost:3000
     ports:
-      - "5113:5113"
+      - "5000:5000"
     depends_on:
       keycloak:
         condition: service_healthy
@@ -98,7 +98,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:5113/api
+      NEXT_PUBLIC_API_URL: http://localhost:5000/api
       NEXT_PUBLIC_KEYCLOAK_URL: http://localhost:8080
       NEXT_PUBLIC_KEYCLOAK_REALM: hypesoft
       NEXT_PUBLIC_KEYCLOAK_CLIENT_ID: hypesoft-frontend

@@ -1,4 +1,4 @@
-@Hypesoft.API_HostAddress = http://localhost:5113
+@Hypesoft.API_HostAddress = http://localhost:5000
 
 GET {{Hypesoft.API_HostAddress}}/weatherforecast/
 Accept: application/json
