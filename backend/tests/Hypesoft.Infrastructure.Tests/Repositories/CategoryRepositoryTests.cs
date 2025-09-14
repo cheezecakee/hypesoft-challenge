@@ -136,8 +136,30 @@ namespace Hypesoft.Infrastructure.Tests.Repositories
         }
 
         [Fact]
-        public async Task GetAllWithProductCountAsync_Should_Return_All_Categories()
+        public async Task GetAllWithProductCountAsync_Should_Return_Categories_With_Products_Only()
         {
+            var cat1 = new Category("CatA", "DescA");
+            var cat2 = new Category("CatB", "DescB");
+            await _context.Categories.AddRangeAsync(cat1, cat2);
+            
+            // Add products only to cat1
+            var product1 = new Product("Product1", "Desc1", new Domain.ValueObjects.Money(100, "USD"), cat1.Id, 5);
+            var product2 = new Product("Product2", "Desc2", new Domain.ValueObjects.Money(200, "USD"), cat1.Id, 3);
+            await _context.Products.AddRangeAsync(product1, product2);
+            await _context.SaveChangesAsync();
+
+            var result = await _repository.GetAllWithProductCountAsync();
+
+            // Should only return cat1 (which has products), not cat2 (which has no products)
+            result.Should().HaveCount(1);
+            result.Should().ContainKey(cat1.Id);
+            result[cat1.Id].Should().Be(2); // cat1 has 2 products
+        }
+
+        [Fact]
+        public async Task GetAllWithProductCountAsync_Should_Return_Empty_When_No_Products()
+        {
+            // Test for when no products exist at all
             var cat1 = new Category("CatA", "DescA");
             var cat2 = new Category("CatB", "DescB");
             await _context.Categories.AddRangeAsync(cat1, cat2);
@@ -145,7 +167,7 @@ namespace Hypesoft.Infrastructure.Tests.Repositories
 
             var result = await _repository.GetAllWithProductCountAsync();
 
-            result.Should().HaveCount(2);
+            result.Should().BeEmpty(); // No categories should be returned since none have products
         }
 
         [Fact]
