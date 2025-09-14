@@ -80,15 +80,11 @@ namespace Hypesoft.API.Controllers
 
         [HttpPatch("{id}/stock")]
         [Authorize(Policy = "ManagerOrAdmin")]
-        public async Task<ActionResult> UpdateProductStock(string id, UpdateProductStockCommand command)
+        public async Task<ActionResult<ProductDto>> UpdateProductStock(string id, [FromBody] UpdateProductStockDto dto)
         {
-            if (id != command.Id)
-            {
-                return BadRequest("Product ID mismatch");
-            }
-
-            await _mediator.Send(command);
-            return NoContent();
+            UpdateProductStockCommand command = new(id, dto.StockQuantity);
+            ProductDto result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
