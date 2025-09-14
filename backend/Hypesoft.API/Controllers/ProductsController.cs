@@ -83,8 +83,10 @@ namespace Hypesoft.API.Controllers
         public async Task<ActionResult<ProductDto>> UpdateProductStock(string id, [FromBody] UpdateProductStockDto dto)
         {
             UpdateProductStockCommand command = new(id, dto.StockQuantity);
-            ProductDto result = await _mediator.Send(command);
-            return Ok(result);
+            ProductDto? result = await _mediator.Send(command);
+            return result == null
+                ? NotFound()
+                : Ok(result);
         }
 
         [HttpDelete("{id}")]

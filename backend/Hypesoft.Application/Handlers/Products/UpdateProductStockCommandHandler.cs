@@ -10,15 +10,18 @@ namespace Hypesoft.Application.Handlers.Products
     public class UpdateProductStockCommandHandler(
             IProductRepository productRepository,
             IMapper mapper
-            ) : IRequestHandler<UpdateProductStockCommand, ProductDto>
+            ) : IRequestHandler<UpdateProductStockCommand, ProductDto?>
     {
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<ProductDto> Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
+        public async Task<ProductDto?> Handle(UpdateProductStockCommand request, CancellationToken cancellationToken)
         {
-            Product product = await _productRepository.GetByIdAsync(request.Id, cancellationToken)
-                ?? throw new ArgumentException($"Product with ID {request.Id} not found");
+            Product? product = await _productRepository.GetByIdAsync(request.Id, cancellationToken);
+            if (product == null)
+            {
+                return null;
+            }
 
             product.UpdateStock(request.StockQuantity);
 
