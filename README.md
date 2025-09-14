@@ -8,11 +8,10 @@ This project is a full-stack product management system demonstrating modern arch
 
 ## Prerequisites
 
-- Docker and Docker Compose installed
+- Docker Desktop 4.0+
+- Node.js 18+
+- .NET 9 SDK
 - Git
-- Node.js 18+ and npm (for local frontend development)
-- .NET 9 SDK (for local backend development)
-- curl or Postman for API testing
 
 ---
 
@@ -43,35 +42,66 @@ This project is a full-stack product management system demonstrating modern arch
 
 ---
 
-## Quick Start (Recommended)
+## Installation and Execution
 
-### Full System (All Services)
+### Clone the repository
 ```bash
 git clone https://github.com/cheezecakee/hypesoft-challenge.git
 cd hypesoft-challenge
-docker compose --profile full up -d
 ```
 
-### Infrastructure Only (No Backend/Frontend)
+### Copy environment variables
 ```bash
-docker compose up -d
+cp .env.example .env ## Included for this demo
 ```
 
-### Backend + Infrastructure
+### Execute the entire application with Docker Compose
 ```bash
-docker compose --profile backend up -d
+docker-compose up -d
 ```
 
-### Frontend + Infrastructure
+### Wait a few seconds for services to start
 ```bash
-docker compose --profile frontend up -d
+# Check if all containers are running
+docker-compose ps
 ```
 
-This will start:
-- **Keycloak**: `http://localhost:8080` (pre-configured)
-- **Backend API**: `http://localhost:5113` (if using backend profile)
-- **MongoDB**: `localhost:27017`
-- **Mongo Express**: `http://localhost:8081`
+## Access URLs
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Frontend** | http://localhost:3000 | Keycloak SSO |
+| **API** | http://localhost:5000 | Bearer token required |
+| **Swagger** | http://localhost:5000/swagger | Bearer token required |
+| **MongoDB Express** | http://localhost:8081 | admin / admin |
+| **Keycloak** | http://localhost:8080 | admin / admin |
+
+## Local Development
+
+### Frontend development
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Backend development
+```bash
+dotnet restore
+dotnet run --project backend/Hypesoft.API
+```
+
+### Run tests
+```bash
+# Backend tests
+dotnet test
+
+# Frontend tests
+cd frontend
+npm test
+```
+
+---
 
 ## Dev Mode with Seed Data
 
@@ -91,16 +121,6 @@ The system comes with a pre-configured Keycloak realm that includes:
   - **Admin**: `admin@hypesoft.com` / `admin123` (Admin role)
   - **Manager**: `manager@hypesoft.com` / `manager123` (Manager role)
   - **User**: `user@hypesoft.com` / `user123` (User role)
-
-### Service URLs & Credentials
-
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Keycloak Admin** | http://localhost:8080 | admin / admin |
-| **Backend API** | http://localhost:5113 | Bearer token required |
-| **Swagger UI** | http://localhost:5113/swagger | Bearer token required |
-| **Mongo Express** | http://localhost:8081 | admin / admin |
-| **Frontend** | http://localhost:3000 | Keycloak SSO |
 
 ---
 
@@ -138,22 +158,10 @@ curl -X POST "http://localhost:8080/realms/hypesoft/protocol/openid-connect/toke
 ```
 > **⚠️ Security Note:** These credentials are for development/testing only. Never use these in production environments.
 
-⚠️ **Important:** If running the backend in Docker, Keycloak is also in Docker. To get a token, you must run curl inside the same Docker network:
-```bash
-docker run --rm --network hypesoft-challenge_default curlimages/curl:latest \
-  -X POST "http://hypesoft-keycloak:8080/realms/hypesoft/protocol/openid-connect/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=password" \
-  -d "client_id=hypesoft-api" \
-  -d "client_secret=..." \
-  -d "username=admin@hypesoft.com" \
-  -d "password=admin123"
-```
-
 ### Using the Token
 
 #### In Swagger UI:
-1. Access Swagger: `http://localhost:5113/swagger`
+1. Access Swagger: `http://localhost:5000/swagger`
 2. Click "Authorize" button
 3. Enter: `Bearer {your_access_token}`
 4. Click "Authorize"
@@ -161,7 +169,7 @@ docker run --rm --network hypesoft-challenge_default curlimages/curl:latest \
 #### In curl:
 ```bash
 curl -H "Authorization: Bearer {your_access_token}" \
-     http://localhost:5113/api/Dashboard/stats
+     http://localhost:5000/api/Dashboard/stats
 ```
 
 ---
@@ -214,30 +222,27 @@ curl -H "Authorization: Bearer {your_access_token}" \
 
 ---
 
-## Running Services Individually
+## Development Options
 
-### Backend Only
+### Infrastructure Only (MongoDB, Keycloak, Mongo Express)
 ```bash
-cd backend/Hypesoft.API
-dotnet restore
-dotnet run
+docker compose --profile infrastructure up -d
 ```
-- Runs on: `http://localhost:5113`
-- Requires: MongoDB and Keycloak running
 
-### Frontend Only
+Then run backend and frontend locally:
 ```bash
-cd frontend/
+# Backend
+dotnet run --project backend/Hypesoft.API
+
+# Frontend (in another terminal)
+cd frontend
 npm install
 npm run dev
 ```
-- Runs on: `http://localhost:3000`
-- Requires: Backend API running
 
-### Infrastructure Services Only
+### Full Application (All services in Docker)
 ```bash
-# Start MongoDB, Keycloak, and Mongo Express
-docker compose up -d mongodb keycloak mongo-express
+docker compose up -d
 ```
 
 ---
@@ -289,34 +294,8 @@ docker compose logs -f mongodb
 docker compose down -v
 
 # Start fresh
-docker compose --profile full up -d
-```
-
----
-
-## Development Workflow
-
-### 1. Start Infrastructure Only
-```bash
 docker compose up -d
 ```
-
-### 2. Run Backend Locally (Optional)
-```bash
-cd backend/Hypesoft.API
-dotnet run
-```
-
-### 3. Run Frontend Locally (Optional)
-```bash
-cd frontend/
-npm run dev
-```
-
-### 4. Make Changes
-- Backend changes require restart
-- Frontend has hot reload
-- Database changes persist in Docker volumes
 
 ---
 
@@ -325,12 +304,10 @@ npm run dev
 ### Getting Help
 1. Check the logs: `docker compose logs [service-name]`
 2. Verify service status: `docker compose ps`
-3. Test connectivity: `curl http://localhost:5113/api/Health`
+3. Test connectivity: `curl http://localhost:5000/api/Health`
 4. Verify authentication with test users
 5. Check database in Mongo Express
 
 ### Known Limitations
 - Development setup uses HTTP (not HTTPS)
 - Client secrets are exposed in docker-compose (development only)
-- Frontend service is commented out pending Dockerfile creation
-
