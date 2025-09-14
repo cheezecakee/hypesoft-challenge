@@ -183,26 +183,23 @@ namespace Hypesoft.Application.Tests.Commands.Products
         }
 
         [Fact]
-        public async Task Handle_ProductNotFound_ShouldThrowArgumentException()
+        public async Task Handle_ProductNotFound_ShouldReturnNull()
         {
             // Arrange
             var productId = "nonexistent-product";
             var command = new UpdateProductStockCommand(productId, 100);
-
             _mockProductRepository
                 .Setup(x => x.GetByIdAsync(productId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync((Product?)null);
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => _handler.Handle(command, CancellationToken.None));
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
 
-            exception.Message.Should().Contain($"Product with ID {productId} not found");
-
+            // Assert
+            result.Should().BeNull();
             _mockProductRepository.Verify(
                 x => x.GetByIdAsync(productId, It.IsAny<CancellationToken>()),
                 Times.Once);
-
             _mockProductRepository.Verify(
                 x => x.UpdateAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()),
                 Times.Never);
