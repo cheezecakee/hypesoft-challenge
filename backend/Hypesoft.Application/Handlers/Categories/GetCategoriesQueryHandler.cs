@@ -17,7 +17,8 @@ namespace Hypesoft.Application.Handlers.Categories
         public async Task<IEnumerable<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
             var categories = await _categoryRepository.GetAllAsync(cancellationToken);
-            var productCounts = await _categoryRepository.GetAllWithProductCountAsync(cancellationToken);
+            var productCounts = await _categoryRepository.GetAllWithProductCountAsync(cancellationToken) ?? new Dictionary<string, int>();
+            
             return categories.Select(category =>
             {
                 var dto = _mapper.Map<CategoryDto>(category);
