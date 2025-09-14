@@ -29,7 +29,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useProducts, useDeleteProduct } from '@/hooks/useProducts';
+import { useProducts, useDeleteProduct, useUpdateProductStock } from '@/hooks/useProducts';
+import { StockUpdateDialog } from '@/components/products/StockUpdateDialog';
 import { ProductsPagination } from './ProductsPagination';
 import type { ProductsQueryParams } from '@/types';
 import { formatPrice } from '@/lib/validation/schemas';
@@ -41,14 +42,30 @@ interface ProductsTableProps {
 
 export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) {
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+    const [stockUpdateProduct, setStockUpdateProduct] = useState<{
+        id: string;
+        name: string;
+        currentStock: number;
+    } | null>(null);
 
     const { data: productsData, isLoading, error } = useProducts(filters);
     const deleteProductMutation = useDeleteProduct();
+    const updateStockMutation = useUpdateProductStock();
 
     const handleDelete = async () => {
         if (deleteProductId) {
             await deleteProductMutation.mutateAsync(deleteProductId);
             setDeleteProductId(null);
+        }
+    };
+
+    const handleStockUpdate = async (newStock: number) => {
+        if (stockUpdateProduct) {
+            await updateStockMutation.mutateAsync({
+                id: stockUpdateProduct.id,
+                stockQuantity: newStock
+            });
+            setStockUpdateProduct(null);
         }
     };
 
@@ -146,19 +163,38 @@ export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) 
                                     </TableCell>
                                     <TableCell>
                                         <Badge variant="outline">
-                                            {/* Updated to use categoryName from API response */}
                                             {product.categoryName || 'No category'}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="font-medium">
-                                        {/* Updated to use formatPrice helper */}
                                         {formatPrice(product.price, product.currency)}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-2">
-                                            <span className={product.isLowStock ? 'text-orange-600 font-medium' : ''}>
-                                                {product.stockQuantity}
-                                            </span>
+                                            <button
+                                                onClick={() => setStockUpdateProduct({
+                                                    id: product.id,
+                                                    name: product.name,
+                                                    currentStock: product.stockQuantity
+                                                })}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        setStockUpdateProduct({
+                                                            id: product.id,
+                                                            name: product.name,
+                                                            currentStock: product.stockQuantity
+                                                        });
+                                                    }
+                                                }}
+                                                className="hover:underline focus:outline-none focus:underline cursor-pointer rounded px-1 py-0.5 hover:bg-muted transition-colors"
+                                                title="Click to update stock"
+                                                type="button"
+                                            >
+                                                <span className={product.isLowStock ? 'text-orange-600 font-medium' : ''}>
+                                                    {product.stockQuantity}
+                                                </span>
+                                            </button>
                                             {product.isLowStock && (
                                                 <AlertTriangle className="h-4 w-4 text-orange-600" />
                                             )}
@@ -224,6 +260,16 @@ export function ProductsTable({ filters, onFiltersChange }: ProductsTableProps) 
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            {/* Stock Update Dialog */}
+            <StockUpdateDialog
+                isOpen={!!stockUpdateProduct}
+                onClose={() => setStockUpdateProduct(null)}
+                onConfirm={handleStockUpdate}
+                productName={stockUpdateProduct?.name || ''}
+                currentStock={stockUpdateProduct?.currentStock || 0}
+                isLoading={updateStockMutation.isPending}
+            />
         </>
     );
 }
