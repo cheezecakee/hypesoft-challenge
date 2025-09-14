@@ -2,7 +2,6 @@ using AutoMapper;
 using Hypesoft.Application.DTOs.Categories;
 using Hypesoft.Application.Queries.Categories;
 using Hypesoft.Domain.Repositories;
-using Hypesoft.Domain.Entities;
 using MediatR;
 
 namespace Hypesoft.Application.Handlers.Categories
@@ -17,9 +16,14 @@ namespace Hypesoft.Application.Handlers.Categories
 
         public async Task<IEnumerable<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
         {
-            IEnumerable<Category> categories = await _categoryRepository.GetAllAsync(cancellationToken);
-            return _mapper.Map<IEnumerable<CategoryDto>>(categories);
+            var categories = await _categoryRepository.GetAllAsync(cancellationToken);
+            var productCounts = await _categoryRepository.GetAllWithProductCountAsync(cancellationToken);
+            return categories.Select(category =>
+            {
+                var dto = _mapper.Map<CategoryDto>(category);
+                var productCount = productCounts.GetValueOrDefault(category.Id, 0);
+                return dto with { ProductCount = productCount };
+            });
         }
     }
 }
-

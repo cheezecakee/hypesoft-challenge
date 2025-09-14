@@ -60,9 +60,14 @@ namespace Hypesoft.Infrastructure.Repositories
             return await _context.Products.AnyAsync(p => p.CategoryId == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Category>> GetAllWithProductCountAsync(CancellationToken cancellationToken = default)
+        public async Task<Dictionary<string, int>> GetAllWithProductCountAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Categories.ToListAsync(cancellationToken);
+            var products = await _context.Products
+                .Select(p => p.CategoryId)
+                .ToListAsync(cancellationToken);
+            return products
+                .GroupBy(categoryId => categoryId)
+                .ToDictionary(g => g.Key, g => g.Count());
         }
 
         public async Task<Category?> GetByIdWithProductCountAsync(string id, CancellationToken cancellationToken = default)
