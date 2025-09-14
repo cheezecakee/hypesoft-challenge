@@ -22,6 +22,8 @@ services:
     volumes:
       - keycloak_data:/opt/keycloak/data
       - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    profiles:
+      - infrastructure
 
   mongodb:
     image: mongo:7.0
@@ -38,6 +40,8 @@ services:
       start_period: 30s
     volumes:
       - mongodb_data:/data/db
+    profiles:
+      - infrastructure
 
   mongo-express:
     image: mongo-express:1.0.2-20
@@ -51,6 +55,8 @@ services:
       ME_CONFIG_BASICAUTH_PASSWORD: admin
     depends_on:
       - mongodb
+    profiles:
+      - infrastructure
 
   backend:
     build:
@@ -86,9 +92,6 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_started
-    profiles:
-      - backend
-      - full
 
   frontend:
     build:
@@ -109,9 +112,6 @@ services:
     depends_on:
       - backend
       - keycloak
-    profiles:
-      - frontend
-      - full
   
 volumes:
   keycloak_data:
