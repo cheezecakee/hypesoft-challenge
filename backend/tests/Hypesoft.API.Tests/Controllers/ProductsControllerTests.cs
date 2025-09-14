@@ -63,7 +63,7 @@ namespace Hypesoft.API.Tests.Controllers
             var result = await _controller.GetProduct("missing");
 
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result.Result);
-            Assert.Contains("missing", notFoundResult.Value.ToString());
+            Assert.Contains("missing", notFoundResult.Value!.ToString());
         }
 
         [Fact]
@@ -115,25 +115,31 @@ namespace Hypesoft.API.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateProductStock_ReturnsNoContent()
+        public async Task UpdateProductStock_ReturnsOkResult()
         {
-            var command = new UpdateProductStockCommand("1", 10);
-            _mediatorMock.Setup(m => m.Send(command, default)).Returns(Task.FromResult(new ProductDto()));
+            var stockDto = new UpdateProductStockDto(10);
+            var expectedDto = new ProductDto("1", "Product", "Desc", 10, "USD", "cat1", "Category 1", 10, false, DateTime.UtcNow, null);
+            
+            _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateProductStockCommand>(), default))
+                .ReturnsAsync(expectedDto);
 
-            var result = await _controller.UpdateProductStock("1", command);
+            var result = await _controller.UpdateProductStock("1", stockDto);
 
-            Assert.IsType<NoContentResult>(result);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedProduct = Assert.IsType<ProductDto>(okResult.Value);
+            Assert.Equal("1", returnedProduct.Id);
         }
 
         [Fact]
-        public async Task UpdateProductStock_ReturnsBadRequest_OnIdMismatch()
+        public async Task UpdateProductStock_ReturnsNotFound_WhenProductNotExists()
         {
-            var command = new UpdateProductStockCommand("2", 10);
+            var stockDto = new UpdateProductStockDto(10);
+            _mediatorMock.Setup(m => m.Send(It.IsAny<UpdateProductStockCommand>(), default))
+                .ReturnsAsync((ProductDto?)null);
 
-            var result = await _controller.UpdateProductStock("1", command);
+            var result = await _controller.UpdateProductStock("nonexistent", stockDto);
 
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Contains("mismatch", badRequest.Value.ToString());
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]
