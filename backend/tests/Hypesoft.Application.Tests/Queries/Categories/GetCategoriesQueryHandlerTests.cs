@@ -68,9 +68,19 @@ namespace Hypesoft.Application.Tests.Queries.Categories
                 CreateTestCategory("2", "Furniture", "Home items", 5)
             };
 
+            var productCounts = new Dictionary<string, int>
+            {
+                {"1", 3},
+                {"2", 5}
+            };
+
             _mockCategoryRepository
                 .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(categories);
+
+            _mockCategoryRepository
+                .Setup(r => r.GetAllWithProductCountAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(productCounts);
 
             var query = new GetCategoriesQuery();
 
@@ -86,6 +96,7 @@ namespace Hypesoft.Application.Tests.Queries.Categories
             list[1].ProductCount.Should().Be(5);
 
             _mockCategoryRepository.Verify(r => r.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _mockCategoryRepository.Verify(r => r.GetAllWithProductCountAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -95,6 +106,10 @@ namespace Hypesoft.Application.Tests.Queries.Categories
             _mockCategoryRepository
                 .Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<Category>());
+
+            _mockCategoryRepository
+                .Setup(r => r.GetAllWithProductCountAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Dictionary<string, int>());
 
             var query = new GetCategoriesQuery();
 
