@@ -6,6 +6,9 @@
 
 This project is a full-stack product management system demonstrating modern architecture, clean code practices, and advanced frontend/backend integration.
 
+## Demo 
+[Link](https://youtu.be/l-DpusnmkZQ)
+
 ## Prerequisites
 
 - Docker Desktop 4.0+
@@ -311,3 +314,4 @@ docker compose up -d
 ### Known Limitations
 - Development setup uses HTTP (not HTTPS)
 - Client secrets are exposed in docker-compose (development only)
+
