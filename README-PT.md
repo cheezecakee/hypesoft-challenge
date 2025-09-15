@@ -6,6 +6,9 @@
 
 Este projeto é um sistema de gerenciamento de produtos full-stack que demonstra arquitetura moderna, práticas de clean code e integração avançada entre frontend e backend.
 
+## Demo 
+[Link](https://youtu.be/l-DpusnmkZQ)
+
 ## Pré-requisitos
 
 - Docker Desktop 4.0+
